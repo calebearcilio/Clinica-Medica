@@ -1,0 +1,31 @@
+{
+  "name": "clinica-medica",
+  "version": "1.0.0",
+  "description": "Projeto de desenvolvimento de uma sistema de gerenciamento de pacientes para uma clínica médica",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "nodemon src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/calebearcilio/Clinica-Medica.git"
+  },
+  "author": "calebe",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/calebearcilio/Clinica-Medica/issues"
+  },
+  "homepage": "https://github.com/calebearcilio/Clinica-Medica#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.5",
+    "@types/node": "^24.10.0",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
