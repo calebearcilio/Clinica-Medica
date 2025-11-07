@@ -8,5 +8,5 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true, // Habilita todas as checagens de tipo estritas
     "skipLibCheck": true
-  }
+  },
 }
