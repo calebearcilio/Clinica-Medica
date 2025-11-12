@@ -1,5 +1,10 @@
-import swaggerJSDoc from "swagger-jsdoc";
-import { Options } from "swagger-jsdoc";
+import swaggerJSDoc, { Options } from "swagger-jsdoc";
+import SwaggerUi from "swagger-ui-express";
+import { Express } from "express";
+import dotenv from "dotenv";
+
+dotenv.config();
+const port = process.env.PORT || 3000;
 
 const options: Options = {
   definition: {
@@ -11,12 +16,16 @@ const options: Options = {
     },
     servers: [
       {
-        url: "http://localhost:3333",
+        url: `http://localhost:${port}`,
       },
     ],
   },
-  // "apis" is the correct option name for swagger-jsdoc
-  apis: ["./src/server.ts", "./src/routes/*.ts"],
+
+  apis: ["./src/routes/*.ts"],
 };
 
-export const swaggerDocs = swaggerJSDoc(options);
+const specs = swaggerJSDoc(options);
+
+export const setupSwagger = (app: Express) => {
+  app.use("/api-docs", SwaggerUi.serve, SwaggerUi.setup(specs));
+};
