@@ -4,8 +4,8 @@ Esse é um projeto de exemplo para gerenciamento de uma clínica médica (médic
 
 ## dependências
 
-- (Node.js)[https://nodejs.org/en/download] v16+ (recomenda-se v18+)
-- PostgreSQL rodando e acessível
+- [Node.js](https://nodejs.org/en/download)
+- [PostgreSQL](https://www.postgresql.org/download/)
 - variáveis de ambiente definidas
 
 ## Instalação e setup (para desenvolvimento)
@@ -17,7 +17,7 @@ git clone https://github.com/calebearcilio/Clinica-Medica.git
 
 2. configure as variáveis de ambiente:
 ```
-DATABASE_URL="postgresql://postgres:senha@localhost:5432/clinicadb"
+DATABASE_URL="postgresql://postgres:SUA_SENHA@localhost:5432/clinicadb"
 PORT=3000
 ```
 
