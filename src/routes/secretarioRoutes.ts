@@ -1,11 +1,11 @@
 import { Router } from "express";
+import * as sc from "../controllers/secretarioController";
+import { validateBody, validateParams } from "../middlewares/validations";
 import {
-  createSecretario,
-  getAllSecretarios,
-  getSecretarioById,
-  updateSecretario,
-  deleteSecretario,
-} from "../controllers/secretarioController";
+  createSecretarioSchema,
+  updateSecretarioSchema,
+  idParamSchema,
+} from "../schemas/secretarioSchemas";
 
 const router: Router = Router();
 
@@ -28,7 +28,7 @@ const router: Router = Router();
  *       500:
  *         description: Erro interno do servidor
  */
-router.get("/secretarios", getAllSecretarios);
+router.get("/secretarios", sc.getAllSecretarios);
 
 /**
  * @swagger
@@ -52,7 +52,11 @@ router.get("/secretarios", getAllSecretarios);
  *       500:
  *         description: Erro interno do servidor
  */
-router.get("/secretarios/:id", getSecretarioById);
+router.get(
+  "/secretarios/:id",
+  validateParams(idParamSchema),
+  sc.getSecretarioById
+);
 
 /**
  * @swagger
@@ -87,7 +91,11 @@ router.get("/secretarios/:id", getSecretarioById);
  *       500:
  *         description: Erro interno do servidor
  */
-router.post("/secretarios", createSecretario);
+router.post(
+  "/secretarios",
+  validateBody(createSecretarioSchema),
+  sc.createSecretario
+);
 
 /**
  * @swagger
@@ -124,7 +132,12 @@ router.post("/secretarios", createSecretario);
  *       500:
  *         description: Erro interno do servidor
  */
-router.put("/secretarios/:id", updateSecretario);
+router.put(
+  "/secretarios/:id",
+  validateParams(idParamSchema),
+  validateBody(updateSecretarioSchema),
+  sc.updateSecretario
+);
 
 /**
  * @swagger
@@ -146,6 +159,10 @@ router.put("/secretarios/:id", updateSecretario);
  *       500:
  *         description: Erro interno do servidor
  */
-router.delete("/secretarios/:id", deleteSecretario);
+router.delete(
+  "/secretarios/:id",
+  validateParams(idParamSchema),
+  sc.deleteSecretario
+);
 
 export default router;

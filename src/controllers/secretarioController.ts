@@ -1,76 +1,114 @@
 import { Request, Response } from "express";
-import { Secretario } from "../generated/prisma/client";
 import * as secretarioService from "../services/secretarioService";
 
 // Busca todos os secretários
 export const getAllSecretarios = async (req: Request, res: Response) => {
   try {
+
     const secretarios = await secretarioService.getAll();
     return res.status(200).json(secretarios);
+
   } catch (error: any) {
-    return res.status(500).json({ error: error.message });
+
+    return res.status(500).json({
+      message: "Erro interno no servidor.",
+      detail: error.message,
+    });
   }
 };
 
 // Busca um secretário pelo ID
 export const getSecretarioById = async (req: Request, res: Response) => {
   try {
-    const id = Number(req.params.id);
 
-    if (isNaN(id) || id <= 0) {
-      res
-        .status(400)
-        .json({ error: "O ID deve ser um número inteiro positivo." });
+    const secretario = await secretarioService.getById(Number(req.params.id));
+
+    if (!secretario) {
+      return res.status(404).json({
+        message: "Secretário(a) não encontrado(a).",
+      });
     }
 
-    const secretario: Secretario = await secretarioService.getById(id);
     return res.status(200).json(secretario);
+
   } catch (error: any) {
-    return res.status(404).json({ error: error.message });
+
+    return res.status(500).json({
+      message: "Erro interno no servidor.",
+      detail: error.message,
+    });
   }
 };
 
 // Cria um novo secretário
 export const createSecretario = async (req: Request, res: Response) => {
   try {
-    const secretario: Secretario = await secretarioService.create(req.body);
 
+    const secretario = await secretarioService.create(req.body);
     return res.status(201).json(secretario);
+
   } catch (error: any) {
-    return res.status(400).json({ error: error.message });
+
+    if (error.code === "P2002") {
+      return res.status(409).json({
+        message: "Email já está em uso.",
+      });
+    }
+
+    return res.status(500).json({
+      message: "Erro interno no servidor.",
+      detail: error.message,
+    });
   }
 };
 
 export const updateSecretario = async (req: Request, res: Response) => {
   try {
-    const id = Number(req.params.id);
 
-    if (isNaN(id) || id <= 0) {
-      res
-        .status(400)
-        .json({ error: "O ID deve ser um número inteiro positivo." });
+    const secretario = await secretarioService.update(
+      Number(req.params.id),
+      req.body
+    );
+    return res.status(200).json(secretario);
+
+  } catch (error: any) {
+
+    if (error.code === "P2025") {
+      return res.status(404).json({
+        message: "Secretário não encontrado.",
+      });
     }
 
-    const secretario = await secretarioService.update(id, req.body);
-    return res.status(200).json(secretario);
-  } catch (error: any) {
-    res.status(400).json({ error: error.message });
+    if (error.code === "P2002") {
+      return res.status(404).json({
+        message: "Email já está em uso.",
+      });
+    }
+
+    return res.status(500).json({
+      message: "Erro interno no servidor.",
+      detail: error.message,
+    });
   }
 };
 
 export const deleteSecretario = async (req: Request, res: Response) => {
   try {
-    const id = Number(req.params.id);
 
-    if (isNaN(id) || id <= 0) {
-      res
-        .status(400)
-        .json({ error: "O ID deve ser um número inteiro positivo." });
-    }
-    await secretarioService.remove(id);
-
+    await secretarioService.remove(Number(req.params.id));
     return res.status(204).send();
+
   } catch (error: any) {
-    return res.status(404).json({ error: error.message });
+
+    if (error.code === "P2025") {
+      return res.status(404).json({
+        message: "Secretário não encontrado.",
+      });
+    }
+
+    return res.status(500).json({
+      message: "Erro interno no servidor.",
+      detail: error.message,
+    });
   }
 };

@@ -3,11 +3,10 @@ import dotenv from "dotenv";
 import { setupSwagger } from "./swagger";
 import routes from "./routes";
 
-dotenv.config();
-
-const app: Express = express();
+dotenv.config({ quiet: true });
 const PORT = process.env.PORT || 3000;
 
+const app: Express = express();
 app.use(express.json());
 app.use("", routes);
 setupSwagger(app);

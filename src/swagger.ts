@@ -3,7 +3,7 @@ import SwaggerUi from "swagger-ui-express";
 import { Express } from "express";
 import dotenv from "dotenv";
 
-dotenv.config();
+dotenv.config({ quiet: true });
 const port = process.env.PORT || 3000;
 
 const options: Options = {
