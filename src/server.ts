@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import { setupSwagger } from "./swagger";
 import routes from "./routes";
 
-dotenv.config();
+dotenv.config({quiet: true});
 
 const app: Express = express();
 const PORT = process.env.PORT || 3000;

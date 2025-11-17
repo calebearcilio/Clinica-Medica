@@ -26,7 +26,13 @@ PORT=3000
 3. instale as dependências:
 
 ```Bach
-npm run dev setup
+npm run setup
+```
+
+4. Inicie o servidor:
+
+```Bach
+npm run dev
 ```
 
 ## Scripts disponíveis
