@@ -1,41 +1,41 @@
 import { Router } from "express";
-import * as sc from "../controllers/secretarioController";
+import * as secretarioController from "../controllers/secretarioController";
 import { validateBody, validateParams } from "../middlewares/validations";
 import {
   createSecretarioSchema,
   updateSecretarioSchema,
-  idParamSchema,
 } from "../schemas/secretarioSchemas";
+import { idParamSchema } from "../schemas/idParamSchema";
 
 const router: Router = Router();
 
 /**
  * @swagger
  * tags:
- *   name: Secretarios
- *   description: Gerenciamento de Secretários
+ *   name: Secretários
+ *   description: Gerenciamento de secretários
  */
 
 /**
  * @swagger
  * /secretarios:
  *   get:
- *     summary: Retorna todos os secretários cadastradpos no banco
- *     tags: [Secretarios]
+ *     summary: Retorna todos os secretários cadastrados no banco
+ *     tags: [Secretários]
  *     responses:
  *       200:
  *         description: Lista de secretários
  *       500:
  *         description: Erro interno do servidor
  */
-router.get("/secretarios", sc.getAllSecretarios);
+router.get("/secretarios", secretarioController.getAllSecretarios);
 
 /**
  * @swagger
  * /secretarios/{id}:
  *   get:
  *     summary: Retorna um secretário pelo ID
- *     tags: [Secretarios]
+ *     tags: [Secretários]
  *     parameters:
  *       - in: path
  *         name: id
@@ -55,7 +55,7 @@ router.get("/secretarios", sc.getAllSecretarios);
 router.get(
   "/secretarios/:id",
   validateParams(idParamSchema),
-  sc.getSecretarioById
+  secretarioController.getSecretarioById
 );
 
 /**
@@ -63,7 +63,7 @@ router.get(
  * /secretarios:
  *   post:
  *     summary: Cria um novo secretário que irá usar o sistema
- *     tags: [Secretarios]
+ *     tags: [Secretários]
  *     requestBody:
  *       required: true
  *       content:
@@ -94,7 +94,7 @@ router.get(
 router.post(
   "/secretarios",
   validateBody(createSecretarioSchema),
-  sc.createSecretario
+  secretarioController.createSecretario
 );
 
 /**
@@ -102,7 +102,7 @@ router.post(
  * /secretarios/{id}:
  *   put:
  *     summary: Atualiza um secretário
- *     tags: [Secretarios]
+ *     tags: [Secretários]
  *     parameters:
  *       - in: path
  *         name: id
@@ -136,7 +136,7 @@ router.put(
   "/secretarios/:id",
   validateParams(idParamSchema),
   validateBody(updateSecretarioSchema),
-  sc.updateSecretario
+  secretarioController.updateSecretario
 );
 
 /**
@@ -144,7 +144,7 @@ router.put(
  * /secretarios/{id}:
  *   delete:
  *     summary: Deleta um secretário
- *     tags: [Secretarios]
+ *     tags: [Secretários]
  *     parameters:
  *       - in: path
  *         name: id
@@ -162,7 +162,7 @@ router.put(
 router.delete(
   "/secretarios/:id",
   validateParams(idParamSchema),
-  sc.deleteSecretario
+  secretarioController.deleteSecretario
 );
 
 export default router;

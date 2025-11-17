@@ -1,26 +1,21 @@
 import { Request, Response } from "express";
 import * as secretarioService from "../services/secretarioService";
 
-// Busca todos os secretários
+// Buscar todos os secretários
 export const getAllSecretarios = async (req: Request, res: Response) => {
   try {
-
     const secretarios = await secretarioService.getAll();
     return res.status(200).json(secretarios);
-
   } catch (error: any) {
-
     return res.status(500).json({
       message: "Erro interno no servidor.",
-      detail: error.message,
     });
   }
 };
 
-// Busca um secretário pelo ID
+// Buscar um secretário pelo ID
 export const getSecretarioById = async (req: Request, res: Response) => {
   try {
-
     const secretario = await secretarioService.getById(Number(req.params.id));
 
     if (!secretario) {
@@ -30,25 +25,19 @@ export const getSecretarioById = async (req: Request, res: Response) => {
     }
 
     return res.status(200).json(secretario);
-
   } catch (error: any) {
-
     return res.status(500).json({
       message: "Erro interno no servidor.",
-      detail: error.message,
     });
   }
 };
 
-// Cria um novo secretário
+// Criar um novo secretário
 export const createSecretario = async (req: Request, res: Response) => {
   try {
-
     const secretario = await secretarioService.create(req.body);
     return res.status(201).json(secretario);
-
   } catch (error: any) {
-
     if (error.code === "P2002") {
       return res.status(409).json({
         message: "Email já está em uso.",
@@ -57,22 +46,19 @@ export const createSecretario = async (req: Request, res: Response) => {
 
     return res.status(500).json({
       message: "Erro interno no servidor.",
-      detail: error.message,
     });
   }
 };
 
+// Atualizar informações de um secretário
 export const updateSecretario = async (req: Request, res: Response) => {
   try {
-
     const secretario = await secretarioService.update(
       Number(req.params.id),
       req.body
     );
     return res.status(200).json(secretario);
-
   } catch (error: any) {
-
     if (error.code === "P2025") {
       return res.status(404).json({
         message: "Secretário não encontrado.",
@@ -87,19 +73,16 @@ export const updateSecretario = async (req: Request, res: Response) => {
 
     return res.status(500).json({
       message: "Erro interno no servidor.",
-      detail: error.message,
     });
   }
 };
 
+// Deletar um secretário
 export const deleteSecretario = async (req: Request, res: Response) => {
   try {
-
     await secretarioService.remove(Number(req.params.id));
     return res.status(204).send();
-
   } catch (error: any) {
-
     if (error.code === "P2025") {
       return res.status(404).json({
         message: "Secretário não encontrado.",
@@ -108,7 +91,6 @@ export const deleteSecretario = async (req: Request, res: Response) => {
 
     return res.status(500).json({
       message: "Erro interno no servidor.",
-      detail: error.message,
     });
   }
 };

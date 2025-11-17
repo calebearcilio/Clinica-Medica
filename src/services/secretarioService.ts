@@ -37,7 +37,7 @@ export const create = async (
   data: SecretarioCreateData
 ): Promise<Omit<Secretario, "senha">> => {
   const secretario = await prisma.secretario.create({ data });
-  const { senha, ...secretarioSemSenha} = secretario;
+  const { senha, ...secretarioSemSenha } = secretario;
   return secretarioSemSenha;
 };
 

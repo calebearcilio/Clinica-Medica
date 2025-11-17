@@ -46,6 +46,7 @@ model Medico {
   email           String      @unique
   crm             String      @unique
   especialidade   String
+  telefone        String?
   consultas       Consulta[]
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
