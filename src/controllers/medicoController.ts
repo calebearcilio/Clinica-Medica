@@ -14,7 +14,7 @@ export const getAllMedicos = async (req: Request, res: Response) => {
 };
 
 // Buscar um médico pelo CRM
-export const getById = async (req: Request, res: Response) => {
+export const getMedicoById = async (req: Request, res: Response) => {
   try {
     const medico = await medicoService.getById(Number(req.params.id));
 

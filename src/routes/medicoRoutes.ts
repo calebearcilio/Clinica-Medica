@@ -20,7 +20,7 @@ const router: Router = Router();
  * @swagger
  * /medicos:
  *   get:
- *     summary: Retorna todos os médicos cadastrados no banco
+ *     summary: Retorna todos os médicos cadastrados no sistema
  *     tags: [Médicos]
  *     responses:
  *       200:
@@ -55,14 +55,14 @@ router.get("/medicos", medicoController.getAllMedicos);
 router.get(
   "/medicos/:id",
   validateParams(idParamSchema),
-  medicoController.getById
+  medicoController.getMedicoById
 );
 
 /**
  * @swagger
  * /medicos:
  *   post:
- *     summary: Cria um novo médico no sistema
+ *     summary: Adiciona um novo médico no sistema
  *     tags: [Médicos]
  *     requestBody:
  *       required: true
@@ -104,7 +104,7 @@ router.post(
  * @swagger
  * /medicos/{id}:
  *   put:
- *     summary: Atualiza um médico
+ *     summary: Atualiza informações de um médico
  *     tags: [Médicos]
  *     parameters:
  *       - in: path
@@ -150,7 +150,7 @@ router.put(
  * @swagger
  * /medicos/{id}:
  *   delete:
- *     summary: Deleta um médico
+ *     summary: Remove um médico do sistema
  *     tags: [Médicos]
  *     parameters:
  *       - in: path

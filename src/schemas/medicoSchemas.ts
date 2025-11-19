@@ -21,7 +21,6 @@ export const createMedicoSchema = z.object({
     .string()
     .min(10, "Telefone deve ter pelo menos 10 caracteres.")
     .max(15, "Telefone deve ter no máximo 15 caracteres.")
-    .nullable()
     .optional(),
 });
 

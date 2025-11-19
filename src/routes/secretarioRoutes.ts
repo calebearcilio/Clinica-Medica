@@ -20,7 +20,7 @@ const router: Router = Router();
  * @swagger
  * /secretarios:
  *   get:
- *     summary: Retorna todos os secretários cadastrados no banco
+ *     summary: Retorna todos os secretários cadastrados no sistema
  *     tags: [Secretários]
  *     responses:
  *       200:
@@ -62,7 +62,7 @@ router.get(
  * @swagger
  * /secretarios:
  *   post:
- *     summary: Cria um novo secretário que irá usar o sistema
+ *     summary: Adiciona um novo secretário que irá usar o sistema
  *     tags: [Secretários]
  *     requestBody:
  *       required: true
@@ -101,7 +101,7 @@ router.post(
  * @swagger
  * /secretarios/{id}:
  *   put:
- *     summary: Atualiza um secretário
+ *     summary: Atualiza informações de um secretário
  *     tags: [Secretários]
  *     parameters:
  *       - in: path
@@ -143,7 +143,7 @@ router.put(
  * @swagger
  * /secretarios/{id}:
  *   delete:
- *     summary: Deleta um secretário
+ *     summary: Remove um secretário do sistema
  *     tags: [Secretários]
  *     parameters:
  *       - in: path
