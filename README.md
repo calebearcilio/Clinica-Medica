@@ -1,10 +1,10 @@
 # Projeto Clinica Medica
 
-Projeto de um sistema de gerenciamente de uma clínica médica, usando as tecnologias mais usadas no mercado
+Projeto de um sistema de gerenciamente de uma clínica médica, usando as tecnologias mais usadas no mercado.
 
 ## Funcionalidades (até agora)
 
-## Backend
+**Backend**
 
 - ✅ Gerenciar secretários
 - ✅ Cadastro e gestão de médicos com especialidades
