@@ -1,6 +1,16 @@
-# API do projeto
+# Projeto Clinica Medica
 
-Esse é um projeto para gerenciamento de uma clínica médica (médicos, pacientes, consultas e secretários). Este repositório contém uma API em TypeScript usando Express e Prisma para persistência em PostgreSQL.
+Projeto de um sistema de gerenciamente de uma clínica médica, usando as tecnologias mais usadas no mercado
+
+## Funcionalidades (até agora)
+
+## Backend
+
+- ✅ Gerenciar secretários
+- ✅ Cadastro e gestão de médicos com especialidades
+- ✅ Controle completo de pacientes
+- ✅ Gerenciamento de consultas
+- ✅ API REST documentada com Swagger
 
 ## Dependências
 
