@@ -1,7 +1,5 @@
 # API do projeto
 
-Esse é um projeto para gerenciamento de uma clínica médica (médicos, pacientes, consultas e secretários). Este repositório contém uma API em TypeScript usando Express e Prisma para persistência em PostgreSQL.
-
 ## Dependências
 
 - [Node.js](https://nodejs.org/en/download)
@@ -14,6 +12,7 @@ Esse é um projeto para gerenciamento de uma clínica médica (médicos, pacient
 
 ```bash
 git clone https://github.com/calebearcilio/Clinica-Medica.git
+cd ".\Clinica-Medica\"
 ```
 
 2. configure as variáveis de ambiente:
@@ -37,11 +36,10 @@ npm run dev
 
 ## Scripts disponíveis
 
-- `npm run dev:api` — inicia a API em modo desenvolvimento
-- `npm run dev:frontend` — inicia o frontend em modo desenvolvimento
-- `npm run build` — gera os arquivos para produção
-- `npm start:api` — inicia a API em modo produção
+- `npm run dev` — inicia a API em modo desenvolvimento
+- `npm run build` — compila TypeScript para `dist/`
+- `npm start` — executa `node dist/server.js` (usado após `npm run build`)
 - `npm run prisma:generate` — gera o Prisma Client
 - `npm run prisma:migrate` — executa migrations e aplica mudanças no banco
 - `npm run prisma:studio` — abre o Prisma Studio
-- `npm run setup` — instala todas as dependências
+- `npm run setup` — instala dependências e executa generate + migrate
