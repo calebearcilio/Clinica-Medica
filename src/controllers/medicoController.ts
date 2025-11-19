@@ -36,7 +36,7 @@ export const getMedicoById = async (req: Request, res: Response) => {
 export const createMedico = async (req: Request, res: Response) => {
   try {
     const medico = await medicoService.create(req.body);
-    return res.status(200).json(medico);
+    return res.status(201).json(medico);
   } catch (error: any) {
     if (error.code === "P2002") {
       return res.status(409).json({
