@@ -34,6 +34,8 @@
     "prisma:generate": "npx prisma generate --prefix api",
     "prisma:migrate": "npx prisma migrate dev --prefix api",
     "prisma:studio": "npx prisma studio --prefix api",
+    "docker:up": "docker-compose up -d --prefix api",
+    "docker:down": "docker-compose down --prefix api",
     "setup": "npm install --prefix frontend && npm run setup --prefix api"
   }
 }
