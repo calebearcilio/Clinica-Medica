@@ -4,7 +4,14 @@ import { Express } from "express";
 import dotenv from "dotenv";
 
 dotenv.config({ quiet: true });
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
+
+const getServerUrl = () => {
+  if(process.env.NODE_ENV === "production"){
+    return process.env.SERVER_URL
+  }
+  return `http://localhost:${process.env.PORT}`
+}
 
 const options: Options = {
   definition: {
@@ -12,11 +19,11 @@ const options: Options = {
     info: {
       title: "API Clínica Médica",
       version: "1.0.0",
-      description: "API para gerenciar médicos em uma clínica médica.",
+      description: "API para gerenciar médicos, pacientes, secretários e consultas.",
     },
     servers: [
       {
-        url: `http://localhost:${port}`,
+        url: getServerUrl(),
       },
     ],
   },
@@ -27,5 +34,5 @@ const options: Options = {
 const specs = swaggerJSDoc(options);
 
 export const setupSwagger = (app: Express) => {
-  app.use("/", SwaggerUi.serve, SwaggerUi.setup(specs));
+  app.use("/api-docs", SwaggerUi.serve, SwaggerUi.setup(specs));
 };
