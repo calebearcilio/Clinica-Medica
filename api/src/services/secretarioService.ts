@@ -1,5 +1,6 @@
 import { prisma } from "../db/prisma";
 import { Secretario } from "../generated/prisma/client";
+import bcrypt from "bcrypt";
 
 type SecretarioCreateData = Omit<Secretario, "id" | "createdAt" | "updatedAt">;
 type SecretarioUpdateData = Partial<SecretarioCreateData>;
@@ -36,7 +37,8 @@ export const getById = async (
 export const create = async (
   data: SecretarioCreateData
 ): Promise<Omit<Secretario, "senha">> => {
-  const secretario = await prisma.secretario.create({ data });
+  const hashSenha = await bcrypt.hash(data.senha, 10);
+  const secretario = await prisma.secretario.create({ data: {...data, senha: hashSenha} });
   const { senha, ...secretarioSemSenha } = secretario;
   return secretarioSemSenha;
 };
