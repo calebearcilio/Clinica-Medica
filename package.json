@@ -27,15 +27,15 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "build": "npm run setup && tsc --prefix api && tsc -b && vite build --prefix frontend",
-    "start:api": "node dist/server.js --prefix api",
-    "dev:api": "tsx watch src/server.ts --prefix api",
-    "dev:frontend": "vite --prefix frontend",
-    "prisma:generate": "npx prisma generate --prefix api",
-    "prisma:migrate": "npx prisma migrate dev --prefix api",
-    "prisma:studio": "npx prisma studio --prefix api",
-    "docker:up": "docker-compose up -d --prefix api",
-    "docker:down": "docker-compose down --prefix api",
+    "build": "npm run setup --prefix api && npm run build --prefix api && npm run build --prefix frontend",
+    "start:api": "npm start --prefix api",
+    "dev:api": "npm run dev --prefix api",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "prisma:generate": "npm run prisma:generate --prefix api",
+    "prisma:migrate": "npm run prisma:migrate --prefix api",
+    "prisma:studio": "npm run prisma:studio --prefix api",
+    "docker:up": "npm run docker:up --prefix api",
+    "docker:down": "npm run docker:down --prefix api",
     "setup": "npm install --prefix frontend && npm run setup --prefix api"
   }
 }

@@ -1,7 +1,7 @@
 import { prisma } from "../db/prisma";
-import { Paciente } from "../generated/prisma/client";
+import { Paciente } from "@prisma/client";
 
-type PacienteCreateData = Omit<Paciente, "id" | "createAt" | "updateAt">;
+type PacienteCreateData = Omit<Paciente, "id" | "createdAt" | "updatedAt">;
 type PacienteUpdateData = Partial<PacienteCreateData>;
 
 export const getAll = async (): Promise<Paciente[]> => {

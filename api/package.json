@@ -12,6 +12,7 @@
     "prisma:studio": "npx prisma studio",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
+    "seed": "tsx src/scripts/seedAll.ts",
     "setup": "npm install && npm run prisma:generate && npm run prisma:migrate"
   },
   "repository": {

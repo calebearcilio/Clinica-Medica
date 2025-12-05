@@ -1,5 +1,5 @@
 import { prisma } from "../db/prisma";
-import { Secretario } from "../generated/prisma/client";
+import { Secretario } from "@prisma/client";
 import bcrypt from "bcrypt";
 
 type SecretarioCreateData = Omit<Secretario, "id" | "createdAt" | "updatedAt">;

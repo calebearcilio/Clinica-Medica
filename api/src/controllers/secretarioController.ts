@@ -66,7 +66,7 @@ export const updateSecretario = async (req: Request, res: Response) => {
     }
 
     if (error.code === "P2002") {
-      return res.status(404).json({
+      return res.status(409).json({
         message: "Email já está em uso.",
       });
     }
