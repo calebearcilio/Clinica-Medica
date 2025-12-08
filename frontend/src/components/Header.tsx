@@ -19,7 +19,7 @@ import {
   LocalHospital as LocalHospitalIcon,
 } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
-import logo from "../../public/logo curaeclinic.png";
+import logo from "../assets/CuraeClinic_logo2.svg";
 
 const SearchBox = styled("div")(({ theme }) => ({
   position: "relative",

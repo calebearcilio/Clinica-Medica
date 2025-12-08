@@ -1,6 +1,5 @@
 import {
   faArrowRightToBracket,
-  faLeaf,
   faLock,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
@@ -9,6 +8,7 @@ import {
   Box,
   Button,
   Checkbox,
+  CircularProgress,
   FormControlLabel,
   Link,
   Paper,
@@ -16,35 +16,73 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
+import { validateLogin } from "../schemas/validations";
+import PopupMessage from "../components/PopupMessage";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
-  const [manter, setManter] = useState(false);
+  const [formData, setFormData] = useState<{ email: string; senha: string }>({
+    email: "",
+    senha: "",
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [msgErro, setMsgErro] = useState<string>("");
+  const [msgSucesso, setMsgSucesso] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const [checkbox, setCheckbox] = useState<boolean>(false); // caixa de seleção "Manter logado"
+
+  function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const { name, value } = event.target;
+    setFormData((form) => ({ ...form, [name]: value }));
+    setErrors((message) => ({ ...message, [name]: "" }));
+    setMsgErro("");
+  }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    console.log("Formulário enviado");
-    console.log("Email:", email)
-    console.log("Senha:", senha)
+    setIsLoading(true);
+    setMsgErro("");
+    setMsgSucesso("");
+
+    setTimeout(() => {
+      const validate = validateLogin(formData);
+      if (!validate.isValid) {
+        setErrors(validate.errors);
+        setMsgErro("Erro ao realizar login. Verifique suas credenciais.");
+      } else {
+        setMsgSucesso("Login realizado com sucesso!");
+      }
+      setIsLoading(false);
+    }, 2000);
   }
 
-  function handleEmailChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setEmail(event.target.value);
-  }
-
-  function handlePasswordChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setSenha(event.target.value);
-  }
   return (
     <Box
       sx={{
         display: "flex",
-        height: "80vh",
+        height: "90vh",
         justifyContent: "center",
         alignItems: "center",
       }}
     >
+      <PopupMessage
+        open={!!msgSucesso}
+        onClose={() => {
+          setMsgSucesso("");
+        }}
+        message={msgSucesso}
+        severity="success"
+      />
+
+      <PopupMessage
+        open={!!msgErro}
+        onClose={() => {
+          setMsgErro("");
+        }}
+        message={msgErro}
+        severity="error"
+      />
+
       <Paper sx={{ p: 2, width: "80vh" }} elevation={7}>
         <Box sx={{ textAlign: "center", mb: 1 }}>
           <FontAwesomeIcon
@@ -64,9 +102,13 @@ const Login = () => {
               label="Email"
               name="email"
               type="email"
-              fullWidth
               margin="normal"
-              onChange={handleEmailChange}
+              onChange={handleInputChange}
+              value={formData.email}
+              error={!!errors.email}
+              helperText={errors.email}
+              disabled={isLoading}
+              fullWidth
             ></TextField>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
@@ -75,17 +117,21 @@ const Login = () => {
               label="Senha"
               name="senha"
               type="password"
-              fullWidth
               margin="normal"
-              onChange={handlePasswordChange}
+              onChange={handleInputChange}
+              value={formData.senha}
+              error={!!errors.senha}
+              helperText={errors.senha}
+              disabled={isLoading}
+              fullWidth
             ></TextField>
           </Box>
           <FormControlLabel
             control={
               <Checkbox
-                checked={manter}
+                checked={checkbox}
                 onChange={(event) => {
-                  setManter(event.target.checked);
+                  setCheckbox(event.target.checked);
                 }}
               />
             }
@@ -97,8 +143,16 @@ const Login = () => {
             color="primary"
             fullWidth
             sx={{ mb: 2 }}
+            disabled={isLoading}
           >
-            Entrar
+            {isLoading ? (
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <CircularProgress size={20} color="inherit" />
+                Carregando...
+              </Box>
+            ) : (
+              "Entrar"
+            )}
           </Button>
           <Box
             sx={{
@@ -109,9 +163,6 @@ const Login = () => {
           >
             <Link href="#nova-senha" underline="hover">
               Esqueci minha senha
-            </Link>
-            <Link href="#cadastrar" underline="hover">
-              Criar conta
             </Link>
           </Box>
         </Box>
