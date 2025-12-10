@@ -1,5 +1,4 @@
 import React from "react";
-import Menu from "../components/Menu";
 import {
   Box,
   Card,
@@ -41,13 +40,7 @@ const recentPatients = [
 const Dashboard: React.FC = () => {
   return (
     <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-
       <Box sx={{ display: "flex", gap: 2 }}>
-        {/* Menu lateral */}
-        <Box component="aside" sx={{ width: 220, p: 2 }}>
-          <Menu />
-        </Box>
-
         {/* Conteúdo principal */}
         <Box component="main" sx={{ flex: 1, p: 3 }}>
           <Typography variant="h5" gutterBottom>
@@ -88,54 +81,54 @@ const Dashboard: React.FC = () => {
           >
             {/* Próximas consultas */}
             <Paper elevation={1} sx={{ p: 2 }}>
-                <Typography variant="subtitle1" gutterBottom>
-                  Próximas Consultas
-                </Typography>
-                <List>
-                  {upcoming.map((u, i) => (
-                    <React.Fragment key={i}>
-                      <ListItem>
-                        <Avatar sx={{ mr: 2 }}>{u.time.split(":")[0]}</Avatar>
-                        <ListItemText
-                          primary={`${u.time} — ${u.patient}`}
-                          secondary={u.doctor}
-                        />
-                        <Chip label="Agendada" size="small" />
-                      </ListItem>
-                      {i < upcoming.length - 1 && <Divider />}
-                    </React.Fragment>
-                  ))}
-                </List>
-              </Paper>
+              <Typography variant="subtitle1" gutterBottom>
+                Próximas Consultas
+              </Typography>
+              <List>
+                {upcoming.map((u, i) => (
+                  <React.Fragment key={i}>
+                    <ListItem>
+                      <Avatar sx={{ mr: 2 }}>{u.time.split(":")[0]}</Avatar>
+                      <ListItemText
+                        primary={`${u.time} — ${u.patient}`}
+                        secondary={u.doctor}
+                      />
+                      <Chip label="Agendada" size="small" />
+                    </ListItem>
+                    {i < upcoming.length - 1 && <Divider />}
+                  </React.Fragment>
+                ))}
+              </List>
+            </Paper>
 
             {/* Pacientes recentes */}
             <Paper elevation={1} sx={{ p: 2 }}>
-                <Typography variant="subtitle1" gutterBottom>
-                  Pacientes Recentes
-                </Typography>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>ID</TableCell>
-                      <TableCell>Nome</TableCell>
-                      <TableCell>Telefone</TableCell>
+              <Typography variant="subtitle1" gutterBottom>
+                Pacientes Recentes
+              </Typography>
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>ID</TableCell>
+                    <TableCell>Nome</TableCell>
+                    <TableCell>Telefone</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {recentPatients.map((p) => (
+                    <TableRow key={p.id} hover>
+                      <TableCell>{p.id}</TableCell>
+                      <TableCell>{p.name}</TableCell>
+                      <TableCell>{p.phone}</TableCell>
                     </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {recentPatients.map((p) => (
-                      <TableRow key={p.id} hover>
-                        <TableCell>{p.id}</TableCell>
-                        <TableCell>{p.name}</TableCell>
-                        <TableCell>{p.phone}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </Paper>
-            </Box>
+                  ))}
+                </TableBody>
+              </Table>
+            </Paper>
           </Box>
         </Box>
       </Box>
+    </Box>
   );
 };
 

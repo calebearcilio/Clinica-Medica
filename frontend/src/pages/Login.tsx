@@ -109,6 +109,7 @@ const Login = () => {
               helperText={errors.email}
               disabled={isLoading}
               fullWidth
+              required
             ></TextField>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
@@ -124,6 +125,7 @@ const Login = () => {
               helperText={errors.senha}
               disabled={isLoading}
               fullWidth
+              required
             ></TextField>
           </Box>
           <FormControlLabel

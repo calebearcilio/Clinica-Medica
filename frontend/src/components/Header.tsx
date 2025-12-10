@@ -1,266 +1,184 @@
-import React, { useState } from "react";
 import {
   AppBar,
-  Toolbar,
-  IconButton,
-  InputBase,
-  Menu,
-  MenuItem,
   Avatar,
   Box,
+  Button,
+  Container,
+  IconButton,
+  Link,
+  Menu,
+  MenuItem,
+  Toolbar,
   Tooltip,
 } from "@mui/material";
-import {
-  Menu as MenuIcon,
-  Search as SearchIcon,
-  AccountCircle as AccountCircleIcon,
-  People as PeopleIcon,
-  EventNote as EventNoteIcon,
-  LocalHospital as LocalHospitalIcon,
-} from "@mui/icons-material";
-import { styled } from "@mui/material/styles";
+import { Menu as MenuIcon } from "@mui/icons-material";
 import logo from "../assets/CuraeClinic_logo2.svg";
 
-const SearchBox = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: "rgba(255, 255, 255, 0.15)",
-  "&:hover": {
-    backgroundColor: "rgba(255, 255, 255, 0.25)",
-  },
-  marginLeft: theme.spacing(3),
-  marginRight: theme.spacing(2),
-  width: "100%",
-  maxWidth: "300px",
-  [theme.breakpoints.down("sm")]: {
-    marginLeft: theme.spacing(1),
-    maxWidth: "150px",
-  },
-}));
+import React from "react";
+import { Link as RouterLink } from "react-router-dom";
 
-const SearchIconWrapper = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  color: "rgba(255, 255, 255, 0.7)",
-}));
+const pages = ["Pacientes", "Médicos", "Consultas"];
+const settings = ["Perfil", "Conta", "Dashboard", "Sair"];
 
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: "20ch",
-    },
-  },
-}));
-
-interface HeaderProps {
-  onMenuClick?: () => void;
-  onSearch?: (query: string) => void;
-  onPacientesClick?: () => void;
-  onConsultasClick?: () => void;
-  onMedicosClick?: () => void;
-}
-
-const Header: React.FC<HeaderProps> = ({
-  onMenuClick,
-  onSearch,
-  onPacientesClick,
-  onConsultasClick,
-  onMedicosClick,
-}) => {
-  const [accountAnchorEl, setAccountAnchorEl] = useState<null | HTMLElement>(
+const Header = () => {
+  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
-  const [searchQuery, setSearchQuery] = useState("");
+  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
+    null
+  );
 
-  const handleAccountMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAccountAnchorEl(event.currentTarget);
-  };
+  function normalizeUrl(str: string) {
+    return str
+      .normalize("NFD") // separa acentos
+      .replace(/[\u0300-\u036f]/g, "") // remove acentos
+      .toLowerCase() // minúsculas
+      .replace(/\s+/g, "-"); // troca espaços por hífen
+  }
 
-  const handleAccountMenuClose = () => {
-    setAccountAnchorEl(null);
-  };
+  function handleOpenNavMenu(event: React.MouseEvent<HTMLElement>) {
+    setAnchorElNav(event.currentTarget);
+  }
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const query = event.target.value;
-    setSearchQuery(query);
-    onSearch?.(query);
-  };
-
-  const handleAccountSettings = () => {
-    handleAccountMenuClose();
-    // Adicionar lógica para navegar para configurações
-  };
-
-  const handleLogout = () => {
-    handleAccountMenuClose();
-    // Adicionar lógica para logout
-  };
+  function handleOpenUserMenu(event: React.MouseEvent<HTMLElement>) {
+    setAnchorElUser(event.currentTarget);
+  }
 
   return (
-    <AppBar
-      position="sticky"
-      sx={{
-        backgroundColor: "#1976d2",
-        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-      }}
-    >
-      <Toolbar sx={{ justifyContent: "space-between" }}>
-        {/* Logo e Menu Button */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <Tooltip title="Abrir menu">
-            <IconButton
-              color="inherit"
-              aria-label="menu"
-              onClick={onMenuClick}
-              sx={{
-                "&:hover": {
-                  backgroundColor: "rgba(255, 255, 255, 0.1)",
-                },
-              }}
-            >
-              <MenuIcon />
-            </IconButton>
-          </Tooltip>
-
-          {/* Logo */}
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              cursor: "pointer",
-              "&:hover": {
-                opacity: 0.8,
-              },
-            }}
+    <AppBar position="sticky">
+      <Container maxWidth="xl">
+        <Toolbar disableGutters>
+          <Link
+            component={RouterLink}
+            to="/"
+            sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
           >
             <img
               src={logo}
-              alt="CuraeClinic Logo"
+              alt="CuraeClinic logo"
               style={{
                 height: "40px",
                 width: "auto",
               }}
             />
-          </Box>
-        </Box>
+          </Link>
 
-        {/* Centro - Search Bar */}
-        <SearchBox>
-          <SearchIconWrapper>
-            <SearchIcon />
-          </SearchIconWrapper>
-          <StyledInputBase
-            placeholder="Buscar pacientes, médicos..."
-            inputProps={{ "aria-label": "search" }}
-            value={searchQuery}
-            onChange={handleSearchChange}
-          />
-        </SearchBox>
-
-        {/* Direita - Botões de Ação e Conta */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          {/* Botão Pacientes */}
-          <Tooltip title="Pacientes">
-            <IconButton
-              color="inherit"
-              onClick={onPacientesClick}
-              sx={{
-                "&:hover": {
-                  backgroundColor: "rgba(255, 255, 255, 0.1)",
-                },
-              }}
-            >
-              <PeopleIcon />
-            </IconButton>
-          </Tooltip>
-
-          {/* Botão Consultas */}
-          <Tooltip title="Consultas">
-            <IconButton
-              color="inherit"
-              onClick={onConsultasClick}
-              sx={{
-                "&:hover": {
-                  backgroundColor: "rgba(255, 255, 255, 0.1)",
-                },
-              }}
-            >
-              <EventNoteIcon />
-            </IconButton>
-          </Tooltip>
-
-          {/* Botão Médicos */}
-          <Tooltip title="Médicos">
-            <IconButton
-              color="inherit"
-              onClick={onMedicosClick}
-              sx={{
-                "&:hover": {
-                  backgroundColor: "rgba(255, 255, 255, 0.1)",
-                },
-              }}
-            >
-              <LocalHospitalIcon />
-            </IconButton>
-          </Tooltip>
-
-          {/* Botão Conta */}
-          <Tooltip title="Configurações da conta">
-            <IconButton
-              color="inherit"
-              onClick={handleAccountMenuOpen}
-              sx={{
-                marginLeft: 1,
-                "&:hover": {
-                  backgroundColor: "rgba(255, 255, 255, 0.1)",
-                },
-              }}
-            >
-              <Avatar
-                sx={{
-                  width: 32,
-                  height: 32,
-                  backgroundColor: "rgba(255, 255, 255, 0.3)",
-                  cursor: "pointer",
-                }}
+          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+            <Tooltip title="Menu de navegação">
+              <IconButton
+                size="large"
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleOpenNavMenu}
+                color="inherit"
               >
-                <AccountCircleIcon />
-              </Avatar>
-            </IconButton>
-          </Tooltip>
-        </Box>
-      </Toolbar>
-
-      {/* Menu Conta */}
-      <Menu
-        anchorEl={accountAnchorEl}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "right",
-        }}
-        keepMounted
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        open={Boolean(accountAnchorEl)}
-        onClose={handleAccountMenuClose}
-      >
-        <MenuItem onClick={handleAccountSettings}>Configurações</MenuItem>
-        <MenuItem onClick={handleLogout}>Sair</MenuItem>
-      </Menu>
+                <MenuIcon />
+              </IconButton>
+            </Tooltip>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorElNav}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+              open={Boolean(anchorElNav)}
+              onClose={() => setAnchorElNav(null)}
+              sx={{ display: { xs: "block", md: "none" } }}
+            >
+              {pages.map((page) => (
+                <MenuItem key={page} onClick={() => setAnchorElNav(null)}>
+                  <Link
+                    component={RouterLink}
+                    to={`/${normalizeUrl(page)}`}
+                    underline="none"
+                    color="inherit"
+                    sx={{ textAlign: "center" }}
+                  >
+                    {page}
+                  </Link>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
+          <Link
+            component={RouterLink}
+            to="/"
+            sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
+          >
+            <img
+              src={logo}
+              alt="CuraeClinic logo"
+              style={{
+                height: "40px",
+                width: "auto",
+              }}
+            />
+          </Link>
+          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+            {pages.map((page) => (
+              <Button
+                key={page}
+                onClick={() => setAnchorElNav(null)}
+                sx={{ my: 2, color: "white", display: "block" }}
+              >
+                <Link
+                  component={RouterLink}
+                  to={`/${normalizeUrl(page)}`}
+                  underline="none"
+                  color="inherit"
+                >
+                  {page}
+                </Link>
+              </Button>
+            ))}
+          </Box>
+          <Box sx={{ flexGrow: 0 }}>
+            <Tooltip title="Configurações da conta">
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jp" />
+              </IconButton>
+            </Tooltip>
+            <Menu
+              sx={{ mt: "45px" }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={() => setAnchorElUser(null)}
+            >
+              {settings.map((setting) => (
+                <MenuItem key={setting} onClick={() => setAnchorElUser(null)}>
+                  <Link
+                    component={RouterLink}
+                    to={`/${normalizeUrl(setting)}`}
+                    underline="none"
+                    color="inherit"
+                    sx={{ textAlign: "center" }}
+                  >
+                    {setting}
+                  </Link>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
+        </Toolbar>
+      </Container>
     </AppBar>
   );
 };
-
 export default Header;
