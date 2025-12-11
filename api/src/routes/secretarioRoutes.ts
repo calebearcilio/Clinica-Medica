@@ -1,5 +1,5 @@
 import { Router } from "express";
-import * as secretarioController from "../controllers/secretarioController";
+import secretarioController from "../controllers/secretarioController";
 import { validateBody, validateParams } from "../middlewares/validations";
 import {
   createSecretarioSchema,

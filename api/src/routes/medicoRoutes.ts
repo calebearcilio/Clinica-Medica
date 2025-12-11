@@ -1,5 +1,5 @@
 import { Router } from "express";
-import * as medicoController from "../controllers/medicoController";
+import medicoController from "../controllers/medicoController";
 import { validateBody, validateParams } from "../middlewares/validations";
 import {
   createMedicoSchema,

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import * as pacienteController from "../controllers/pacienteController";
+import pacienteController from "../controllers/pacienteController";
 import { validateBody, validateParams } from "../middlewares/validations";
 import {
   createPacienteSchema,

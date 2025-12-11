@@ -1,5 +1,5 @@
 import { Router } from "express";
-import * as consultaController from "../controllers/consultaController";
+import consultaController from "../controllers/consultaController";
 import { validateBody, validateParams } from "../middlewares/validations";
 import {
   createConsultaSchema,

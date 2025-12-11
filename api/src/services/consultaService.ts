@@ -6,55 +6,56 @@ type ConsultaUpdateData = Partial<
   Omit<Consulta, "id" | "createdAt" | "updatedAt" | "pacienteId" | "medicoId">
 >;
 
-export const getAll = async () => {
-  return prisma.consulta.findMany({
-    include: {
-      paciente: { omit: { id: true, createdAt: true, updatedAt: true } },
-      medico: { omit: { id: true, createdAt: true, updatedAt: true } },
-    },
-  });
+const consultaService = {
+  async getAll() {
+    return prisma.consulta.findMany({
+      include: {
+        paciente: { omit: { id: true, createdAt: true, updatedAt: true } },
+        medico: { omit: { id: true, createdAt: true, updatedAt: true } },
+      },
+    });
+  },
+
+  async getById(id: number) {
+    return prisma.consulta.findUnique({
+      where: { id },
+      include: { paciente: true, medico: true },
+    });
+  },
+
+  async create(data: ConsultaCreateData): Promise<Consulta> {
+    const { pacienteId, medicoId } = data;
+
+    const paciente = await prisma.paciente.findUnique({
+      where: { id: pacienteId },
+    });
+    if (!paciente) {
+      throw new Error("Paciente da consulta não encontrado.");
+    }
+
+    const medico = await prisma.medico.findUnique({ where: { id: medicoId } });
+    if (!medico) {
+      throw new Error("Médico da consulta não encontrado.");
+    }
+
+    return prisma.consulta.create({
+      data: { ...data, dataHora: new Date(data.dataHora) },
+    });
+  },
+
+  async update(id: number, data: ConsultaUpdateData): Promise<Consulta> {
+    return prisma.consulta.update({
+      where: { id },
+      data: {
+        ...data,
+        dataHora: data.dataHora ? new Date(data.dataHora) : undefined,
+      },
+    });
+  },
+
+  async remove(id: number): Promise<Consulta> {
+    return prisma.consulta.delete({ where: { id } });
+  },
 };
 
-export const getById = async (id: number) => {
-  return prisma.consulta.findUnique({
-    where: { id },
-    include: { paciente: true, medico: true },
-  });
-};
-
-export const create = async (data: ConsultaCreateData): Promise<Consulta> => {
-  const { pacienteId, medicoId } = data;
-
-  const paciente = await prisma.paciente.findUnique({
-    where: { id: pacienteId },
-  });
-  if (!paciente) {
-    throw new Error("Paciente da consulta não encontrado.");
-  }
-
-  const medico = await prisma.medico.findUnique({ where: { id: medicoId } });
-  if (!medico) {
-    throw new Error("Médico da consulta não encontrado.");
-  }
-
-  return prisma.consulta.create({
-    data: { ...data, dataHora: new Date(data.dataHora) },
-  });
-};
-
-export const update = async (
-  id: number,
-  data: ConsultaUpdateData
-): Promise<Consulta> => {
-  return prisma.consulta.update({
-    where: { id },
-    data: {
-      ...data,
-      dataHora: data.dataHora ? new Date(data.dataHora) : undefined,
-    },
-  });
-};
-
-export const remove = async (id: number): Promise<Consulta> => {
-  return prisma.consulta.delete({ where: { id } });
-};
+export default consultaService;
