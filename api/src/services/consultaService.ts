@@ -9,8 +9,8 @@ type ConsultaUpdateData = Partial<
 export const getAll = async () => {
   return prisma.consulta.findMany({
     include: {
-      paciente: { select: { nome: true, cpf: true } },
-      medico: { select: { nome: true, especialidade: true } },
+      paciente: { omit: { id: true, createdAt: true, updatedAt: true } },
+      medico: { omit: { id: true, createdAt: true, updatedAt: true } },
     },
   });
 };

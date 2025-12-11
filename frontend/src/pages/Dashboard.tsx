@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Card,
@@ -17,34 +17,77 @@ import {
   Avatar,
   Chip,
 } from "@mui/material";
-
-const sampleStats = [
-  { label: "Pacientes", value: 124 },
-  { label: "Médicos", value: 18 },
-  { label: "Consultas", value: 47 },
-  { label: "Secretários", value: 5 },
-];
-
-const upcoming = [
-  { time: "09:00", patient: "João Silva", doctor: "Dra. Maria" },
-  { time: "10:30", patient: "Ana Costa", doctor: "Dr. Pedro" },
-  { time: "11:00", patient: "Carlos Souza", doctor: "Dra. Paula" },
-];
-
-const recentPatients = [
-  { id: "P-001", name: "João Silva", phone: "(11) 99999-0000" },
-  { id: "P-002", name: "Ana Costa", phone: "(11) 98888-1111" },
-  { id: "P-003", name: "Carlos Souza", phone: "(11) 97777-2222" },
-];
+import type { Paciente } from "../types/paciente";
+import type { Medico } from "../types/medico";
+import type { Consulta } from "../types/consulta";
+import pacienteService from "../services/pacienteService";
+import medicoService from "../services/medicoService";
+import consultaService from "../services/consultaService";
+import {
+  amountConsultas,
+  amountMedicos,
+  amountPacientes,
+  amountSecretarios,
+  sortConsultasByData,
+  sortPacientesByCreateData,
+} from "../utils/dashboardUtils";
+import DashboardSkeleton from "../components/dashboard/DeshboardSkeleton";
+import type { Secretario } from "../types/secretario";
+import secretarioService from "../services/secretarioService";
 
 const Dashboard: React.FC = () => {
+  const [pacientes, setPacientes] = useState<Paciente[]>([]);
+  const [medicos, setMedicos] = useState<Medico[]>([]);
+  const [consultas, setConsultas] = useState<Consulta[]>([]);
+  const [secretario, setSecretarios] = useState<Secretario[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async (): Promise<void> => {
+    try {
+      const [pacientesDB, medicosDB, consultasDB, secretariosDB] =
+        await Promise.all([
+          pacienteService.get(),
+          medicoService.get(),
+          consultaService.get(),
+          secretarioService.get(),
+        ]);
+      setPacientes(pacientesDB);
+      setMedicos(medicosDB);
+      setConsultas(consultasDB);
+      setSecretarios(secretariosDB);
+      console.log(consultasDB);
+    } catch (error: any) {
+      console.log("Erro ao carregar informações do servidor.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const statusAmount = [
+    { label: "Pacientes", value: amountPacientes(pacientes) },
+    { label: "Médicos", value: amountMedicos(medicos) },
+    { label: "Consultas", value: amountConsultas(consultas) },
+    { label: "Secretários", value: amountSecretarios(secretario) },
+  ];
+
+  const consultasSort = sortConsultasByData(consultas);
+  const recentPatientes = sortPacientesByCreateData(pacientes);
+
+  if (loading) {
+    return <DashboardSkeleton />;
+  }
+
   return (
-    <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+    <Box sx={{ display: "flex", flexDirection: "column" }}>
       <Box sx={{ display: "flex", gap: 2 }}>
         {/* Conteúdo principal */}
         <Box component="main" sx={{ flex: 1, p: 3 }}>
           <Typography variant="h5" gutterBottom>
-            Painel de Controle
+            Dashboard
           </Typography>
 
           {/* Cards de estatísticas */}
@@ -60,13 +103,13 @@ const Dashboard: React.FC = () => {
               mb: 2,
             }}
           >
-            {sampleStats.map((s) => (
-              <Card key={s.label} elevation={2}>
+            {statusAmount.map((sa) => (
+              <Card key={sa.label} elevation={2}>
                 <CardContent>
                   <Typography variant="subtitle2" color="text.secondary">
-                    {s.label}
+                    {sa.label}
                   </Typography>
-                  <Typography variant="h6">{s.value}</Typography>
+                  <Typography variant="h6">{sa.value}</Typography>
                 </CardContent>
               </Card>
             ))}
@@ -75,7 +118,7 @@ const Dashboard: React.FC = () => {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "340px 1fr" },
+              gridTemplateColumns: { xs: "1fr", md: "380px 1fr" },
               gap: 2,
             }}
           >
@@ -85,17 +128,17 @@ const Dashboard: React.FC = () => {
                 Próximas Consultas
               </Typography>
               <List>
-                {upcoming.map((u, i) => (
-                  <React.Fragment key={i}>
+                {consultasSort.map((consulta) => (
+                  <React.Fragment key={consulta.id}>
                     <ListItem>
-                      <Avatar sx={{ mr: 2 }}>{u.time.split(":")[0]}</Avatar>
+                      <Avatar sx={{ mr: 2 }}>{Number(consulta.dataHora.slice(8,10))}</Avatar>
                       <ListItemText
-                        primary={`${u.time} — ${u.patient}`}
-                        secondary={u.doctor}
+                        primary={`${consulta.dataHora.slice(11,16)} — ${consulta.paciente.nome}`}
+                        secondary={consulta.medico.nome}
                       />
                       <Chip label="Agendada" size="small" />
                     </ListItem>
-                    {i < upcoming.length - 1 && <Divider />}
+                    {consulta.id < consultasSort.length && <Divider />}
                   </React.Fragment>
                 ))}
               </List>
@@ -109,17 +152,17 @@ const Dashboard: React.FC = () => {
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell>ID</TableCell>
+                    <TableCell>CPF</TableCell>
                     <TableCell>Nome</TableCell>
                     <TableCell>Telefone</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {recentPatients.map((p) => (
-                    <TableRow key={p.id} hover>
-                      <TableCell>{p.id}</TableCell>
-                      <TableCell>{p.name}</TableCell>
-                      <TableCell>{p.phone}</TableCell>
+                  {recentPatientes.map((paciente) => (
+                    <TableRow key={paciente.id} hover>
+                      <TableCell>{paciente.cpf}</TableCell>
+                      <TableCell>{paciente.nome}</TableCell>
+                      <TableCell>{paciente.telefone}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

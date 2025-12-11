@@ -6,7 +6,7 @@ import type {
 } from "../types/consulta";
 import { API_ENDPOINTS } from "../config/api";
 
-const ConsultaService = {
+const consultaService = {
   async get(): Promise<Consulta[]> {
     const request = await axios.get<Consulta[]>(API_ENDPOINTS.CONSULTAS);
     return request.data;
@@ -37,4 +37,4 @@ const ConsultaService = {
   },
 };
 
-export default ConsultaService;
+export default consultaService;

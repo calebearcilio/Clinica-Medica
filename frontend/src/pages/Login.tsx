@@ -18,15 +18,17 @@ import {
 import React, { useState } from "react";
 import { validateLogin } from "../schemas/validations";
 import PopupMessage from "../components/PopupMessage";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navegate = useNavigate();
   const [formData, setFormData] = useState<{ email: string; senha: string }>({
     email: "",
     senha: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [msgErro, setMsgErro] = useState<string>("");
-  const [msgSucesso, setMsgSucesso] = useState<string>("");
+  const [msgSuccess, setMsgSuccess] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [checkbox, setCheckbox] = useState<boolean>(false); // caixa de seleção "Manter logado"
@@ -42,7 +44,7 @@ const Login = () => {
     event.preventDefault();
     setIsLoading(true);
     setMsgErro("");
-    setMsgSucesso("");
+    setMsgSuccess("");
 
     setTimeout(() => {
       const validate = validateLogin(formData);
@@ -50,10 +52,13 @@ const Login = () => {
         setErrors(validate.errors);
         setMsgErro("Erro ao realizar login. Verifique suas credenciais.");
       } else {
-        setMsgSucesso("Login realizado com sucesso!");
+        setMsgSuccess("Login realizado com sucesso!");
+        setTimeout(() => {
+          navegate("/dashboard");
+        }, 1000);
       }
       setIsLoading(false);
-    }, 2000);
+    }, 1000);
   }
 
   return (
@@ -66,11 +71,11 @@ const Login = () => {
       }}
     >
       <PopupMessage
-        open={!!msgSucesso}
+        open={!!msgSuccess}
         onClose={() => {
-          setMsgSucesso("");
+          setMsgSuccess("");
         }}
-        message={msgSucesso}
+        message={msgSuccess}
         severity="success"
       />
 

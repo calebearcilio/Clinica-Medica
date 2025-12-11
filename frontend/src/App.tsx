@@ -14,7 +14,7 @@ function App() {
         </Route>
         {/* Rotas com cabeçalho */}
         <Route element={<DefaultLayout />}>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Route>
       </Routes>
     </BrowserRouter>

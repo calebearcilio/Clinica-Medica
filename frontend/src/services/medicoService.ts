@@ -6,7 +6,7 @@ import type {
 } from "../types/medico";
 import { API_ENDPOINTS } from "../config/api";
 
-const MedicoService = {
+const medicoService = {
   async get(): Promise<Medico[]> {
     const request = await axios.get<Medico[]>(API_ENDPOINTS.MEDICOS);
     return request.data;
@@ -35,4 +35,4 @@ const MedicoService = {
   },
 };
 
-export default MedicoService;
+export default medicoService;
