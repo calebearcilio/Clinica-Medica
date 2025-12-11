@@ -16,9 +16,10 @@ import logo from "../assets/CuraeClinic_logo2.svg";
 
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
+import { normalizeUrl } from "../utils/headerUtils";
 
 const pages = ["Pacientes", "Médicos", "Consultas"];
-const settings = ["Perfil", "Conta", "Dashboard", "Sair"];
+const settings = ["Perfil", "Conta", "Dashboard"];
 
 const Header = () => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
@@ -28,14 +29,6 @@ const Header = () => {
     null
   );
 
-  function normalizeUrl(str: string) {
-    return str
-      .normalize("NFD") // separa acentos
-      .replace(/[\u0300-\u036f]/g, "") // remove acentos
-      .toLowerCase() // minúsculas
-      .replace(/\s+/g, "-"); // troca espaços por hífen
-  }
-
   function handleOpenNavMenu(event: React.MouseEvent<HTMLElement>) {
     setAnchorElNav(event.currentTarget);
   }
@@ -44,10 +37,15 @@ const Header = () => {
     setAnchorElUser(event.currentTarget);
   }
 
+  function handleExit() {
+    console.log("Clicou em sair.");
+  }
+
   return (
     <AppBar position="sticky">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
+          {/* Logo */}
           <Link
             component={RouterLink}
             to="/"
@@ -93,20 +91,22 @@ const Header = () => {
               sx={{ display: { xs: "block", md: "none" } }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={() => setAnchorElNav(null)}>
-                  <Link
-                    component={RouterLink}
-                    to={`/${normalizeUrl(page)}`}
-                    underline="none"
-                    color="inherit"
-                    sx={{ textAlign: "center" }}
-                  >
+                <Link
+                  key={page}
+                  component={RouterLink}
+                  to={`/${normalizeUrl(page)}`}
+                  underline="none"
+                  color="inherit"
+                  sx={{ textAlign: "center" }}
+                >
+                  <MenuItem onClick={() => setAnchorElNav(null)}>
                     {page}
-                  </Link>
-                </MenuItem>
+                  </MenuItem>
+                </Link>
               ))}
             </Menu>
           </Box>
+          {/* Logo */}
           <Link
             component={RouterLink}
             to="/"
@@ -121,22 +121,23 @@ const Header = () => {
               }}
             />
           </Link>
+
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
-              <Button
+              <Link
                 key={page}
-                onClick={() => setAnchorElNav(null)}
-                sx={{ my: 2, color: "white", display: "block" }}
+                component={RouterLink}
+                to={`/${normalizeUrl(page)}`}
+                underline="none"
+                color="inherit"
               >
-                <Link
-                  component={RouterLink}
-                  to={`/${normalizeUrl(page)}`}
-                  underline="none"
-                  color="inherit"
+                <Button
+                  onClick={() => setAnchorElNav(null)}
+                  sx={{ my: 2, color: "white", display: "block" }}
                 >
                   {page}
-                </Link>
-              </Button>
+                </Button>
+              </Link>
             ))}
           </Box>
           <Box sx={{ flexGrow: 0 }}>
@@ -162,18 +163,27 @@ const Header = () => {
               onClose={() => setAnchorElUser(null)}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={() => setAnchorElUser(null)}>
-                  <Link
-                    component={RouterLink}
-                    to={`/${normalizeUrl(setting)}`}
-                    underline="none"
-                    color="inherit"
-                    sx={{ textAlign: "center" }}
-                  >
+                <Link
+                  key={setting}
+                  component={RouterLink}
+                  to={`/${normalizeUrl(setting)}`}
+                  underline="none"
+                  color="inherit"
+                  sx={{ textAlign: "center" }}
+                >
+                  <MenuItem onClick={() => setAnchorElUser(null)}>
                     {setting}
-                  </Link>
-                </MenuItem>
+                  </MenuItem>
+                </Link>
               ))}
+              <Link
+                underline="none"
+                color="inherit"
+                sx={{ textAlign: "center" }}
+                onClick={handleExit}
+              >
+                <MenuItem onClick={() => setAnchorElUser(null)}>Sair</MenuItem>
+              </Link>
             </Menu>
           </Box>
         </Toolbar>
