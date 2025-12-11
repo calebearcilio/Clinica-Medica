@@ -6,5 +6,8 @@ export type Secretario = {
   telefone?: string;
 }
 
-export type CreateSecretarioData = Omit<Secretario, "id">;
-export type UpdateSecretarioData = Partial<CreateSecretarioData>;
+export type LoginSecretario = {
+  email: string;
+  senha: string;
+}
+

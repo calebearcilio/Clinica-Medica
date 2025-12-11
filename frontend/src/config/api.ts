@@ -5,7 +5,8 @@ const getUrlApi = (): string => {
 const BASE_URL_API = getUrlApi();
 
 export const API_ENDPOINTS = {
-  LOGIN: `${BASE_URL_API}/login`,
+  LOGIN: `${BASE_URL_API}/secretarios/login`,
+  SECRETARIO: `${BASE_URL_API}/secretarios`,
   MEDICOS: `${BASE_URL_API}/medicos`,
   PACIENTES: `${BASE_URL_API}/pacientes`,
   CONSULTAS: `${BASE_URL_API}/consultas`,

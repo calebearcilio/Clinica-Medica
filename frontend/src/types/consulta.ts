@@ -11,5 +11,5 @@ export type Consulta = {
   medico: Omit<Medico, "id">;
 }
 
-export type CreateConsultaData = Omit<Consulta, "id">;
+export type CreateConsultaData = Omit<Consulta, "id" | "paciente" | "medico">;
 export type UpdateConsultaData = Partial<CreateConsultaData>;
