@@ -12,6 +12,13 @@ const pacienteService = {
     return request.data;
   },
 
+  async getById(id: number): Promise<Paciente> {
+    const request = await axios.get<Paciente>(
+      `${API_ENDPOINTS.PACIENTES}/${id}`
+    );
+    return request.data;
+  },
+
   async create(data: CreatePacienteData): Promise<Paciente> {
     const request = await axios.post<Paciente>(API_ENDPOINTS.PACIENTES, data);
     return request.data;

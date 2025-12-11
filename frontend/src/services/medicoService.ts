@@ -12,6 +12,11 @@ const MedicoService = {
     return request.data;
   },
 
+  async getById(id: number): Promise<Medico> {
+    const request = await axios.get<Medico>(`${API_ENDPOINTS.MEDICOS}/${id}`);
+    return request.data;
+  },
+
   async create(data: CreateMedicoData): Promise<Medico> {
     const request = await axios.post<Medico>(API_ENDPOINTS.MEDICOS, data);
     return request.data;
