@@ -50,7 +50,7 @@ const DashboardSkeleton: React.FC = () => {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "340px 1fr" },
+              gridTemplateColumns: { xs: "1fr", md: "400px 1fr" },
               gap: 2,
             }}
           >

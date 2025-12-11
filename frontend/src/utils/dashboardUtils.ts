@@ -3,20 +3,8 @@ import type { Medico } from "../types/medico";
 import type { Paciente } from "../types/paciente";
 import type { Secretario } from "../types/secretario";
 
-export function amountPacientes(pacientes: Paciente[]): number {
-  return pacientes.length;
-}
-
-export function amountMedicos(medicos: Medico[]): number {
-  return medicos.length;
-}
-
-export function amountSecretarios(secretarios: Secretario[]): number {
-  return secretarios.length;
-}
-
-export function amountConsultas(consultas: Consulta[]): number {
-  return consultas.length;
+export function amountItens(itens: unknown[]): number {
+  return itens.length;
 }
 
 export function consultasToday(consultas: Consulta[]): Consulta[] | null {
