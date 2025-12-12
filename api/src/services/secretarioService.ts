@@ -1,6 +1,7 @@
 import { prisma } from "../db/prisma";
 import { Secretario } from "@prisma/client";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 type SecretarioCreateData = Omit<Secretario, "id" | "createdAt" | "updatedAt">;
 type SecretarioUpdateData = Partial<SecretarioCreateData>;
@@ -11,14 +12,7 @@ const secretarioService = {
    */
   async getAll(): Promise<Omit<Secretario, "senha">[]> {
     return await prisma.secretario.findMany({
-      select: {
-        id: true,
-        nome: true,
-        email: true,
-        telefone: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      omit: { senha: true },
     });
   },
 
@@ -29,14 +23,7 @@ const secretarioService = {
   async getById(id: number): Promise<Omit<Secretario, "senha"> | null> {
     return await prisma.secretario.findUnique({
       where: { id },
-      select: {
-        id: true,
-        nome: true,
-        email: true,
-        telefone: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      omit: { senha: true },
     });
   },
 
@@ -65,14 +52,7 @@ const secretarioService = {
     return await prisma.secretario.update({
       where: { id },
       data,
-      select: {
-        id: true,
-        nome: true,
-        email: true,
-        telefone: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      omit: { senha: true },
     });
   },
 
@@ -81,7 +61,39 @@ const secretarioService = {
    * @returns Todos os dados do secretário removido
    */
   async remove(id: number): Promise<Omit<Secretario, "senha">> {
-    return prisma.secretario.delete({ where: { id } });
+    return await prisma.secretario.delete({
+      where: { id },
+      omit: { senha: true },
+    });
+  },
+
+  async login(
+    email: string,
+    password: string,
+    keepLogin: boolean = false
+  ): Promise<(Omit<Secretario, "senha"> & { token: string }) | null> {
+    const secretario = await prisma.secretario.findUnique({
+      where: {
+        email,
+      },
+    });
+    if (!secretario) return null;
+
+    const senhaValid = await bcrypt.compare(password, secretario.senha);
+    if (!senhaValid) return null;
+
+    const JWT_KEY = process.env.JWT_KEY!;
+    const token = jwt.sign(
+      {
+        id: secretario.id,
+        email: secretario.email,
+      },
+      JWT_KEY,
+      { expiresIn: keepLogin ? "30d" : "1d" }
+    );
+
+    const { senha, ...secretarioSemSenha } = secretario;
+    return { ...secretarioSemSenha, token };
   },
 };
 

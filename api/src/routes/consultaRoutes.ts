@@ -1,11 +1,12 @@
 import { Router } from "express";
 import consultaController from "../controllers/consultaController";
-import { validateBody, validateParams } from "../middlewares/validations";
+import { validateBody, validateParams } from "../middlewares/schemaValidation";
 import {
   createConsultaSchema,
   updateConsultaSchema,
 } from "../schemas/consultaSchema";
 import { idParamSchema } from "../schemas/idParamSchema";
+import { validateAuth } from "../middlewares/authValidation";
 
 const router: Router = Router();
 
@@ -25,10 +26,12 @@ const router: Router = Router();
  *     responses:
  *       200:
  *         description: Lista de consultas
+ *       401:
+ *         description: Token inválido ou expirado
  *       500:
  *         description: Erro interno do servidor
  */
-router.get("/consultas", consultaController.getAllConsultas);
+router.get("/consultas", validateAuth, consultaController.getAllConsultas);
 
 /**
  * @swagger
@@ -47,6 +50,8 @@ router.get("/consultas", consultaController.getAllConsultas);
  *         description: Consulta encontrada
  *       400:
  *         description: ID inválido
+ *       401:
+ *         description: Token inválido ou expirado
  *       404:
  *         description: Consulta não encontrada
  *       500:
@@ -54,6 +59,7 @@ router.get("/consultas", consultaController.getAllConsultas);
  */
 router.get(
   "/consultas/:id",
+  validateAuth,
   validateParams(idParamSchema),
   consultaController.getConsultaById
 );
@@ -89,11 +95,14 @@ router.get(
  *         description: Consulta criada com sucesso
  *       400:
  *         description: Erro na requisição
+ *       401:
+ *         description: Token inválido ou expirado
  *       500:
  *         description: Erro interno do servidor
  */
 router.post(
   "/consultas",
+  validateAuth,
   validateBody(createConsultaSchema),
   consultaController.createConsulta
 );
@@ -131,6 +140,8 @@ router.post(
  *         description: Consulta atualizada com sucesso
  *       400:
  *         description: Erro na requisição
+ *       401:
+ *         description: Token inválido ou expirado
  *       404:
  *         description: Consulta não encontrada
  *       500:
@@ -138,6 +149,7 @@ router.post(
  */
 router.put(
   "/consultas/:id",
+  validateAuth,
   validateParams(idParamSchema),
   validateBody(updateConsultaSchema),
   consultaController.updateConsulta
@@ -158,6 +170,8 @@ router.put(
  *     responses:
  *       204:
  *         description: Consulta deletada com sucesso
+ *       401:
+ *         description: Token inválido ou expirado
  *       404:
  *         description: Consulta não encontrada
  *       500:
@@ -165,6 +179,7 @@ router.put(
  */
 router.delete(
   "/consultas/:id",
+  validateAuth,
   validateParams(idParamSchema),
   consultaController.deleteConsulta
 );

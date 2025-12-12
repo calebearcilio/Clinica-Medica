@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import zod, { ZodError } from "zod";
+import z, { ZodError } from "zod";
 
-export const validateBody = (schema: zod.ZodType<any>) => {
+export const validateBody = (schema: z.ZodType<any>) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
       const parsed = schema.parse(req.body);
@@ -12,7 +12,7 @@ export const validateBody = (schema: zod.ZodType<any>) => {
         return res.status(400).json({
           message: "Dados de entrada inválidos.",
           errors: error.issues.map((err: any) => ({
-            campo: err.path.join("."),
+            campo: err.path[0],
             mensagem: err.message,
           })),
         });
@@ -23,7 +23,7 @@ export const validateBody = (schema: zod.ZodType<any>) => {
   };
 };
 
-export const validateParams = (schema: zod.ZodType<any>) => {
+export const validateParams = (schema: z.ZodType<any>) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
       const validateParams = schema.parse(req.params);
@@ -34,7 +34,7 @@ export const validateParams = (schema: zod.ZodType<any>) => {
         return res.status(400).json({
           message: "Parâmetros inválidos.",
           errors: error.issues.map((err: any) => ({
-            campo: err.path.join("."),
+            campo: err.path[0],
             mensagem: err.message,
           })),
         });
@@ -45,7 +45,7 @@ export const validateParams = (schema: zod.ZodType<any>) => {
   };
 };
 
-export const validateQuery = (schema: zod.ZodType<any>) => {
+export const validateQuery = (schema: z.ZodType<any>) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
       const validateQuery = schema.parse(req.query);
@@ -56,7 +56,7 @@ export const validateQuery = (schema: zod.ZodType<any>) => {
         return res.status(400).json({
           message: "Parâmetros de consulta inválidos.",
           errors: error.issues.map((err: any) => ({
-            campo: err.path.join("."),
+            campo: err.path[0],
             mensagem: err.message,
           })),
         });

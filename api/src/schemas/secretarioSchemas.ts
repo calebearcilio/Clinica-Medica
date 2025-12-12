@@ -19,6 +19,15 @@ export const createSecretarioSchema = z.object({
     .optional(),
 });
 
+export const loginSecretarioSchema = z.object({
+  email: z.email("Email inválido").min(1, "Email é obrigatório"),
+  senha: z
+    .string("Senha inválida")
+    .min(1, "Senha é obrigatória")
+    .min(6, "Senha deve ter pelo menos 6 caracteres"),
+  keepLogin: z.boolean().optional().default(false),
+});
+
 export const updateSecretarioSchema = createSecretarioSchema.partial();
 
 export type CreateSecretarioData = z.infer<typeof createSecretarioSchema>;

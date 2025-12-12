@@ -1,6 +1,6 @@
 import { Router } from "express";
 import pacienteController from "../controllers/pacienteController";
-import { validateBody, validateParams } from "../middlewares/validations";
+import { validateBody, validateParams } from "../middlewares/schemaValidation";
 import {
   createPacienteSchema,
   updatePacienteSchema,

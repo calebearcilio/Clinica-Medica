@@ -1,8 +1,9 @@
 import { Router } from "express";
 import secretarioController from "../controllers/secretarioController";
-import { validateBody, validateParams } from "../middlewares/validations";
+import { validateBody, validateParams } from "../middlewares/schemaValidation";
 import {
   createSecretarioSchema,
+  loginSecretarioSchema,
   updateSecretarioSchema,
 } from "../schemas/secretarioSchemas";
 import { idParamSchema } from "../schemas/idParamSchema";
@@ -163,6 +164,45 @@ router.delete(
   "/secretarios/:id",
   validateParams(idParamSchema),
   secretarioController.deleteSecretario
+);
+
+/**
+ * @swagger
+ * /secretarios/login:
+ *   post:
+ *     summary: Realiza autenticação de um secretário
+ *     tags: [Secretários]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - senha
+ *             properties:
+ *               email:
+ *                 type: string
+ *               senha:
+ *                 type: string
+ *               keepLogin:
+ *                 type: boolean
+ *                 default: false
+ *     responses:
+ *       200:
+ *         description: Secretário autenticado com sucesso
+ *       400:
+ *         description: Erro na requisição
+ *       401:
+ *         description: Credenciais inválidas
+ *       500:
+ *         description: Erro interno do servidor
+ */
+router.post(
+  "/secretarios/login",
+  validateBody(loginSecretarioSchema),
+  secretarioController.getSecretarioByLogin
 );
 
 export default router;

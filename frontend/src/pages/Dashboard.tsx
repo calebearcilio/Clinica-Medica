@@ -295,7 +295,7 @@ const Dashboard: React.FC = () => {
                 sx={{ mt: 2 }}
                 onClick={() => setShowAllPacientes(!showAllPacientes)}
               >
-                {showAllPacientes ? "Mostrar menos" : "Mostrar menos"}
+                {showAllPacientes ? "Mostrar menos" : "Mostrar mais"}
               </Button>
             </Paper>
           </Box>
