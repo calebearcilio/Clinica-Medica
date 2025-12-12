@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 
 type SecretarioCreateData = Omit<Secretario, "id" | "createdAt" | "updatedAt">;
 type SecretarioUpdateData = Partial<SecretarioCreateData>;
+type SecretarioLoginResponse = Omit<Secretario, "id" | "senha" | "createdAt" | "updatedAt">;
 
 const secretarioService = {
   /**
@@ -71,11 +72,15 @@ const secretarioService = {
     email: string,
     password: string,
     keepLogin: boolean = false
-  ): Promise<(Omit<Secretario, "senha"> & { token: string }) | null> {
+  ): Promise<(SecretarioLoginResponse & { token: string }) | null> {
     const secretario = await prisma.secretario.findUnique({
       where: {
         email,
       },
+      omit: {
+        createdAt: true,
+        updatedAt: true,
+      }
     });
     if (!secretario) return null;
 
@@ -92,7 +97,7 @@ const secretarioService = {
       { expiresIn: keepLogin ? "30d" : "1d" }
     );
 
-    const { senha, ...secretarioSemSenha } = secretario;
+    const { senha, id, ...secretarioSemSenha } = secretario;
     return { ...secretarioSemSenha, token };
   },
 };

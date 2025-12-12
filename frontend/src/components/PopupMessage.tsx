@@ -18,7 +18,7 @@ const PopupMessage = ({ open, onClose, severity = "info", message }: Props) => {
       open={open}
       autoHideDuration={3000}
       anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      slots={{ transition:SlideRight}}
+      slots={{ transition: SlideRight }}
       onClose={onClose}
     >
       <Alert

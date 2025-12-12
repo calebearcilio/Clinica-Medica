@@ -123,7 +123,7 @@ const secretarioController = {
 
   async getSecretarioByLogin(req: Request, res: Response) {
     try {
-      const { email, senha, keepLogin = false } = req.body;
+      const { email, senha, keepLogin } = req.body;
       const secretario = await secretarioService.login(email, senha, keepLogin);
       if (!secretario) {
         return res.status(401).json({
@@ -133,8 +133,8 @@ const secretarioController = {
       return res.status(200).json(secretario);
     } catch (error: any) {
       return res.status(500).json({
-        message: "Erro interno no servidor."
-      })
+        message: "Erro interno no servidor.",
+      });
     }
   },
 };

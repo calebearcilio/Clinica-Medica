@@ -12,9 +12,9 @@ const router: Router = Router();
 
 /**
  * @swagger
- * tags:
- *   name: Consultas
- *   description: Gerenciamento de consultas
+ *  tags:
+ *    name: Consultas
+ *    description: Gerenciamento de consultas
  */
 
 /**
@@ -23,6 +23,8 @@ const router: Router = Router();
  *   get:
  *     summary: Retorna todas as consultas cadastradas no banco
  *     tags: [Consultas]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Lista de consultas
@@ -45,6 +47,8 @@ router.get("/consultas", validateAuth, consultaController.getAllConsultas);
  *         required: true
  *         schema:
  *           type: integer
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Consulta encontrada
@@ -90,6 +94,8 @@ router.get(
  *                 format: date-time
  *               descricao:
  *                 type: string
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       201:
  *         description: Consulta criada com sucesso
@@ -135,6 +141,8 @@ router.post(
  *                 format: date-time
  *               descricao:
  *                 type: string
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       204:
  *         description: Consulta atualizada com sucesso
@@ -167,6 +175,8 @@ router.put(
  *         required: true
  *         schema:
  *           type: integer
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       204:
  *         description: Consulta deletada com sucesso

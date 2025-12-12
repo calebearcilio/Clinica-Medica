@@ -15,7 +15,7 @@ import { Menu as MenuIcon } from "@mui/icons-material";
 import logo from "../assets/CuraeClinic_logo2.svg";
 
 import React from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { normalizeUrl } from "../utils/headerUtils";
 
 const pages = ["Pacientes", "Médicos", "Consultas"];
@@ -28,6 +28,7 @@ const Header = () => {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
+  const navigate = useNavigate();
 
   function handleOpenNavMenu(event: React.MouseEvent<HTMLElement>) {
     setAnchorElNav(event.currentTarget);
@@ -38,7 +39,9 @@ const Header = () => {
   }
 
   function handleExit() {
-    console.log("Clicou em sair.");
+    localStorage.clear();
+    sessionStorage.clear();
+    navigate("/login");
   }
 
   return (

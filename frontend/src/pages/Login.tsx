@@ -19,6 +19,7 @@ import React, { useState } from "react";
 import { validateLogin } from "../schemas/validations";
 import PopupMessage from "../components/PopupMessage";
 import { useNavigate } from "react-router-dom";
+import secretarioService from "../services/secretarioService";
 
 const Login = () => {
   const navegate = useNavigate();
@@ -31,7 +32,7 @@ const Login = () => {
   const [msgSuccess, setMsgSuccess] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const [checkbox, setCheckbox] = useState<boolean>(false); // caixa de seleção "Manter logado"
+  const [keepLogin, setKeepLogin] = useState<boolean>(false); // caixa de seleção "Manter logado"
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target;
@@ -40,25 +41,36 @@ const Login = () => {
     setMsgErro("");
   }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    const validate = validateLogin(formData);
+    if (!validate.isValid) {
+      setErrors(validate.errors);
+      setMsgErro("Erro ao realizar login. Verifique suas credenciais.");
+      return;
+    }
+
     setIsLoading(true);
     setMsgErro("");
     setMsgSuccess("");
-
-    setTimeout(() => {
-      const validate = validateLogin(formData);
-      if (!validate.isValid) {
-        setErrors(validate.errors);
-        setMsgErro("Erro ao realizar login. Verifique suas credenciais.");
-      } else {
-        setMsgSuccess("Login realizado com sucesso!");
-        setTimeout(() => {
-          navegate("/dashboard");
-        }, 1000);
-      }
+    try {
+      const secretario = await secretarioService.login(
+        formData.email,
+        formData.senha,
+        keepLogin
+      );
+      setMsgSuccess(
+        `Login realizado com sucesso! Bem-vindo, ${secretario.nome}.`
+      );
+      setTimeout(() => {
+        navegate("/dashboard");
+      }, 1000);
+    } catch (error: any) {
+      setMsgErro("Erro interno no sistema. Tente novamente mais tarde.");
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   }
 
   return (
@@ -136,9 +148,9 @@ const Login = () => {
           <FormControlLabel
             control={
               <Checkbox
-                checked={checkbox}
+                checked={keepLogin}
                 onChange={(event) => {
-                  setCheckbox(event.target.checked);
+                  setKeepLogin(event.target.checked);
                 }}
               />
             }

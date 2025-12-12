@@ -7,11 +7,11 @@ dotenv.config({ quiet: true });
 const PORT = process.env.PORT || 3000;
 
 const getServerUrl = () => {
-  if(process.env.NODE_ENV === "production"){
-    return process.env.SERVER_URL
+  if (process.env.NODE_ENV === "production") {
+    return process.env.SERVER_URL;
   }
-  return `http://localhost:${process.env.PORT}`
-}
+  return `http://localhost:${process.env.PORT}`;
+};
 
 const options: Options = {
   definition: {
@@ -19,7 +19,17 @@ const options: Options = {
     info: {
       title: "API Clínica Médica",
       version: "1.0.0",
-      description: "API para gerenciar médicos, pacientes, secretários e consultas.",
+      description:
+        "API para gerenciar médicos, pacientes, secretários e consultas.",
+    },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
     },
     servers: [
       {
@@ -27,7 +37,7 @@ const options: Options = {
       },
     ],
   },
-
+  security: [{ bearerAuth: [] }],
   apis: ["./src/routes/*.ts"],
 };
 
