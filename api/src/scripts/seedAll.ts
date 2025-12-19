@@ -1,9 +1,9 @@
 import { Consulta, Medico, Paciente } from "@prisma/client";
 import { prisma } from "../db/prisma";
-import * as medicoService from "../services/medicoService";
-import * as pacienteService from "../services/pacienteService";
-import * as secretarioService from "../services/secretarioService";
-import * as consultaService from "../services/consultaService";
+import medicoService from "../services/medicoService";
+import pacienteService from "../services/pacienteService";
+import secretarioService from "../services/secretarioService";
+import consultaService from "../services/consultaService";
 
 const medicos = [
   {

@@ -10,8 +10,7 @@ export const createPacienteSchema = z.object({
     .max(255, "Email deve ter no máximo 255 caracteres."),
   cpf: z
     .string()
-    .min(11, "CPF deve ter 11 caracteres.")
-    .regex(/^\d+$/, "CPF deve conter apenas números"),
+    .length(14, "CPF deve ter 14 caracteres."),
   dataNascimento: z
     .string()
     .refine((date) => {
