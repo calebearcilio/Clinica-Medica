@@ -180,11 +180,11 @@ router.delete(
  *             type: object
  *             required:
  *               - email
- *               - senha
+ *               - password
  *             properties:
  *               email:
  *                 type: string
- *               senha:
+ *               password:
  *                 type: string
  *               keepLogin:
  *                 type: boolean

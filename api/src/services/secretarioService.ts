@@ -1,11 +1,9 @@
 import { prisma } from "../db/prisma";
 import { Secretario } from "@prisma/client";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 
 type SecretarioCreateData = Omit<Secretario, "id" | "createdAt" | "updatedAt">;
 type SecretarioUpdateData = Partial<SecretarioCreateData>;
-type SecretarioLoginResponse = Omit<Secretario, "id" | "senha" | "createdAt" | "updatedAt">;
 
 const secretarioService = {
   /**
@@ -68,11 +66,9 @@ const secretarioService = {
     });
   },
 
-  async login(
-    email: string,
-    password: string,
-    keepLogin: boolean = false
-  ): Promise<(SecretarioLoginResponse & { token: string }) | null> {
+  async getByEmail(
+    email: string
+  ): Promise<Omit<Secretario, "createdAt" | "updatedAt"> | null> {
     const secretario = await prisma.secretario.findUnique({
       where: {
         email,
@@ -80,25 +76,9 @@ const secretarioService = {
       omit: {
         createdAt: true,
         updatedAt: true,
-      }
-    });
-    if (!secretario) return null;
-
-    const senhaValid = await bcrypt.compare(password, secretario.senha);
-    if (!senhaValid) return null;
-
-    const JWT_KEY = process.env.JWT_KEY!;
-    const token = jwt.sign(
-      {
-        id: secretario.id,
-        email: secretario.email,
       },
-      JWT_KEY,
-      { expiresIn: keepLogin ? "30d" : "1d" }
-    );
-
-    const { senha, id, ...secretarioSemSenha } = secretario;
-    return { ...secretarioSemSenha, token };
+    });
+    return secretario;
   },
 };
 

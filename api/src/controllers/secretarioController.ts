@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import secretarioService from "../services/secretarioService";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const secretarioController = {
   /**
@@ -123,12 +125,34 @@ const secretarioController = {
 
   async getSecretarioByLogin(req: Request, res: Response) {
     try {
-      const { email, senha, keepLogin } = req.body;
-      const secretario = await secretarioService.login(email, senha, keepLogin);
-      if (!secretario) {
-        return res.status(401).json({
-          message: "Credenciais inválidas.",
+      const { email, password, keepLogin = false } = req.body;
+      const secretarioDB = await secretarioService.getByEmail(email);
+      if (!secretarioDB) {
+        return res.status(400).json({
+          message: "Email inválido.",
         });
+      }
+
+      const validPassword = await bcrypt.compare(password, secretarioDB.senha);
+      if (!validPassword) {
+        return res.status(400).json({
+          message: "Senha inválida.",
+        });
+      }
+
+      const JWT_KEY = process.env.JWT_KEY!;
+      const token = jwt.sign(
+        {
+          id: secretarioDB.id,
+          email: secretarioDB.email,
+        },
+        JWT_KEY,
+        { expiresIn: keepLogin ? "30d" : "1d" }
+      );
+      const { senha, ...secretarioSemSenha } = secretarioDB;
+      const secretario = {
+        ...secretarioSemSenha,
+        token: token
       }
       return res.status(200).json(secretario);
     } catch (error: any) {

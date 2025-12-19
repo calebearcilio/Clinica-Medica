@@ -21,7 +21,7 @@ export const createSecretarioSchema = z.object({
 
 export const loginSecretarioSchema = z.object({
   email: z.email("Email inválido").min(1, "Email é obrigatório"),
-  senha: z
+  password: z
     .string("Senha inválida")
     .min(1, "Senha é obrigatória")
     .min(6, "Senha deve ter pelo menos 6 caracteres"),
