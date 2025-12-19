@@ -4,7 +4,7 @@ import type {
   Paciente,
   UpdatePacienteData,
 } from "../types/paciente";
-import { API_ENDPOINTS } from "../config/api";
+import { API_ENDPOINTS } from "../config/apiUrl";
 
 const pacienteService = {
   async get(): Promise<Paciente[]> {

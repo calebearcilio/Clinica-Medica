@@ -69,7 +69,8 @@ const Dashboard: React.FC = () => {
 
   // Função de carregamento dos dados do servidor
   const loadData = async (): Promise<void> => {
-    if (secretarios.length === 0) setLoading(true);
+    setLoading(true);
+    setMsgError(null);
 
     try {
       const [pacientesDB, medicosDB, consultasDB, secretariosDB] =

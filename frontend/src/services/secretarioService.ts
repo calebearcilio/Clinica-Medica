@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { API_ENDPOINTS } from "../config/api";
+import { API_ENDPOINTS } from "../config/apiUrl";
 import type { Secretario } from "../types/secretario";
 
 type LoginResponse = {
@@ -40,8 +40,8 @@ const secretarioService = {
 
       return secretario.data;
     } catch (error: any) {
-      if(error instanceof AxiosError){
-        if(error.response){
+      if (error instanceof AxiosError) {
+        if (error.response) {
           throw new Error(error.response.data.message + " Tente novamente.");
         }
         throw new Error("Erro de conexão com o servidor. Tente novamente.");
