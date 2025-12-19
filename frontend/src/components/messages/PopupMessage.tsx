@@ -23,7 +23,7 @@ const PopupMessage = ({ open, onClose, severity = "info", message }: Props) => {
     >
       <Alert
         severity={severity}
-        variant="outlined"
+        variant="standard"
         sx={{
           width: "100%",
           borderRadius: "10px",

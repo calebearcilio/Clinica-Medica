@@ -3,17 +3,16 @@ import { Alert, Box, Button, Paper, Typography } from "@mui/material";
 type Props = {
   alertMessage: string;
   message: string;
-  functionReload: () => void;
+  functionReload: () => Promise<void>;
   severity?: "success" | "error" | "warning" | "info";
-  buttonColor?: "success" | "inherit" | "primary" | "secondary" | "error" | "warning" | "info";
+  // buttonColor?: "success" | "inherit" | "primary" | "secondary" | "error" | "warning" | "info";
 };
 
 const StaticMessage = ({
   alertMessage,
   message,
   functionReload,
-  severity = "info",
-  buttonColor = "info"
+  severity = "info"
 }: Props) => {
   return (
     <Box
@@ -41,7 +40,7 @@ const StaticMessage = ({
           {message}
         </Typography>
 
-        <Button variant="contained" color={buttonColor} fullWidth onClick={functionReload}>
+        <Button variant="contained" color={severity} fullWidth onClick={functionReload}>
           Tentar novamente
         </Button>
       </Paper>

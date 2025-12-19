@@ -13,10 +13,10 @@ import {
 } from "@mui/material";
 import { Menu as MenuIcon } from "@mui/icons-material";
 import logo from "../assets/CuraeClinic_logo2.svg";
-
 import React from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { normalizeUrl } from "../utils/headerUtils";
+import secretarioService from "../services/secretarioService";
 
 const pages = ["Pacientes", "Médicos", "Consultas"];
 const settings = ["Perfil", "Conta", "Dashboard"];
@@ -39,8 +39,7 @@ const Header = () => {
   }
 
   function handleExit() {
-    localStorage.clear();
-    sessionStorage.clear();
+    secretarioService.logout();
     navigate("/login");
   }
 

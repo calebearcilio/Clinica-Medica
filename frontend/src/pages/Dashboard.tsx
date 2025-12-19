@@ -32,7 +32,7 @@ import {
 import DashboardSkeleton from "../components/dashboard/DeshboardSkeleton";
 import type { Secretario } from "../types/secretario";
 import secretarioService from "../services/secretarioService";
-import StaticMessage from "../components/StaticMessage";
+import StaticMessage from "../components/messages/StaticMessage";
 
 const Dashboard: React.FC = () => {
   // Dados do banco
@@ -127,7 +127,6 @@ const Dashboard: React.FC = () => {
         message="Não conseguimos carregar os dados. Isso pode ser temporário."
         functionReload={loadData}
         severity="error"
-        buttonColor="error"
       />
     );
   }
@@ -180,7 +179,7 @@ const Dashboard: React.FC = () => {
                 Próximas Consultas
               </Typography>
               <List>
-                {(showAllConsultas ? consultas : consultasPaginadas).map(
+                {(showAllConsultas ? consultasSort : consultasPaginadas).map(
                   (consulta, index) => (
                     <React.Fragment key={consulta.id}>
                       <ListItem>

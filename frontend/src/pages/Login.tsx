@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { validateLogin } from "../schemas/validations";
-import PopupMessage from "../components/PopupMessage";
+import PopupMessage from "../components/messages/PopupMessage";
 import { useNavigate } from "react-router-dom";
 import secretarioService from "../services/secretarioService";
 
@@ -31,7 +31,6 @@ const Login = () => {
   const [msgErro, setMsgErro] = useState<string>("");
   const [msgSuccess, setMsgSuccess] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
   const [keepLogin, setKeepLogin] = useState<boolean>(false); // caixa de seleção "Manter logado"
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -64,10 +63,18 @@ const Login = () => {
         `Login realizado com sucesso! Bem-vindo, ${secretario.nome}.`
       );
       setTimeout(() => {
-        navegate("/dashboard");
+        navegate("/dashboard", { replace: true });
       }, 1000);
     } catch (error: any) {
-      setMsgErro("Erro interno no sistema. Tente novamente mais tarde.");
+      if (error.message) {
+        const message = error.message.split(".")[0];
+        const key = error.message.split(" ")[0].toLowerCase();
+
+        setMsgErro(error.message);
+        setErrors({ [key]: message });
+        return;
+      }
+      setMsgErro("Erro interno. Tente novamente mais tarde.");
     } finally {
       setIsLoading(false);
     }
