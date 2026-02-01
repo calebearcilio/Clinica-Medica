@@ -25,7 +25,6 @@ import pacienteService from "../services/pacienteService";
 import medicoService from "../services/medicoService";
 import consultaService from "../services/consultaService";
 import {
-  amountItens,
   sortConsultasByData,
   sortPacientesByCreateData,
 } from "../utils/dashboardUtils";
@@ -94,10 +93,10 @@ const Dashboard: React.FC = () => {
 
   // Status de quantidades
   const statusAmount = [
-    { label: "Pacientes", value: amountItens(pacientes) },
-    { label: "Médicos", value: amountItens(medicos) },
-    { label: "Consultas", value: amountItens(consultas) },
-    { label: "Secretários", value: amountItens(secretarios) },
+    { label: "Pacientes", value: pacientes.length },
+    { label: "Médicos", value: medicos.length },
+    { label: "Consultas", value: consultas.length },
+    { label: "Secretários", value: secretarios.length },
   ];
 
   // Ordenação de entidades
@@ -105,14 +104,14 @@ const Dashboard: React.FC = () => {
   const recentPatientes = sortPacientesByCreateData(pacientes);
 
   // Paginação de consultas
-  const consultasPaginadas = consultas.slice(
+  const consultasPaginadas = consultasSort.slice(
     pageConsultas * limitConsultas,
-    pageConsultas * limitConsultas + limitConsultas
+    pageConsultas * limitConsultas + limitConsultas,
   );
   // Paginação de pacientes
   const pacientesPaginados = recentPatientes.slice(
     pagePacientes * limitPacientes,
-    pagePacientes * limitPacientes + limitPacientes
+    pagePacientes * limitPacientes + limitPacientes,
   );
 
   // Carregando dados do servidor
@@ -176,9 +175,24 @@ const Dashboard: React.FC = () => {
           >
             {/* Próximas consultas */}
             <Paper elevation={1} sx={{ p: 2 }}>
-              <Typography variant="subtitle1" gutterBottom>
-                Próximas Consultas
-              </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "flex-end",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Typography variant="subtitle1" gutterBottom>
+                  Próximas Consultas
+                </Typography>
+                <Button
+                  variant="contained"
+                  sx={{ mt: 2 }}
+                  onClick={() => setShowAllConsultas(!showAllConsultas)}
+                >
+                  {showAllConsultas ? "Mostrar menos" : "Mostrar mais"}
+                </Button>
+              </Box>
               <List>
                 {(showAllConsultas ? consultasSort : consultasPaginadas).map(
                   (consulta, index) => (
@@ -197,7 +211,7 @@ const Dashboard: React.FC = () => {
                       </ListItem>
                       {index < consultasSort.length && <Divider />}
                     </React.Fragment>
-                  )
+                  ),
                 )}
 
                 {!showAllConsultas && (
@@ -227,21 +241,29 @@ const Dashboard: React.FC = () => {
                     </Button>
                   </Box>
                 )}
-                <Button
-                  variant="contained"
-                  sx={{ mt: 2 }}
-                  onClick={() => setShowAllConsultas(!showAllConsultas)}
-                >
-                  {showAllConsultas ? "Mostrar menos" : "Mostrar mais"}
-                </Button>
               </List>
             </Paper>
 
             {/* Pacientes recentes */}
             <Paper elevation={1} sx={{ p: 2 }}>
-              <Typography variant="subtitle1" gutterBottom>
-                Pacientes Recentes
-              </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "flex-end",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Typography variant="subtitle1" gutterBottom>
+                  Pacientes Recentes
+                </Typography>
+                <Button
+                  variant="contained"
+                  sx={{ mt: 2 }}
+                  onClick={() => setShowAllPacientes(!showAllPacientes)}
+                >
+                  {showAllPacientes ? "Mostrar menos" : "Mostrar mais"}
+                </Button>
+              </Box>
               <Table size="small">
                 <TableHead>
                   <TableRow>
@@ -282,7 +304,7 @@ const Dashboard: React.FC = () => {
                   <Button
                     variant="outlined"
                     disabled={
-                      (pagePacientes + 1) * limitConsultas >= consultas.length
+                      (pagePacientes + 1) * limitPacientes >= pacientes.length
                     }
                     onClick={() => setPagePacientes(pagePacientes + 1)}
                   >
@@ -290,13 +312,6 @@ const Dashboard: React.FC = () => {
                   </Button>
                 </Box>
               )}
-              <Button
-                variant="contained"
-                sx={{ mt: 2 }}
-                onClick={() => setShowAllPacientes(!showAllPacientes)}
-              >
-                {showAllPacientes ? "Mostrar menos" : "Mostrar mais"}
-              </Button>
             </Paper>
           </Box>
         </Box>

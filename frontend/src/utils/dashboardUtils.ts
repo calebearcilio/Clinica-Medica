@@ -1,11 +1,5 @@
 import type { Consulta } from "../types/consulta";
-import type { Medico } from "../types/medico";
 import type { Paciente } from "../types/paciente";
-import type { Secretario } from "../types/secretario";
-
-export function amountItens(itens: unknown[]): number {
-  return itens.length;
-}
 
 export function consultasToday(consultas: Consulta[]): Consulta[] | null {
   const today = new Date().toISOString().slice(0, 10);
