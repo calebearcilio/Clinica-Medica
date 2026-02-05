@@ -1,9 +1,147 @@
-import React from 'react'
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import DefaultTable, { type Column } from "../components/DefaultTable";
+import type { Medico } from "../types/medico";
+import { useEffect, useState } from "react";
+import medicoService from "../services/medicoService";
+import MedicoFormModal from "../components/medicos/MedicoFormModal";
 
 const Medicos = () => {
-  return (
-    <div>Medicos</div>
-  )
-}
+  const [medicos, setMedicos] = useState<Medico[]>([]);
+  const [medicoToDelete, setMedicoToDelete] = useState<Medico | null>(null);
+  const [medicoEdit, setMedicoEdit] = useState<Medico | null>(null);
+  const [openForm, setOpenForm] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
-export default Medicos
+  const columnsTable: Column<Medico>[] = [
+    { id: "nome", label: "Nome" },
+    { id: "especialidade", label: "Especialidade" },
+    { id: "crm", label: "CRM" },
+    { id: "email", label: "Email" },
+    { id: "telefone", label: "Telefone" },
+    {
+      id: "id",
+      label: "Ações",
+      align: "right",
+      format: (_, row) => (
+        <Box>
+          <IconButton
+            color="primary"
+            onClick={() => {
+              setMedicoEdit(row);
+              setOpenForm(true);
+            }}
+          >
+            <EditIcon />
+          </IconButton>
+          <IconButton color="error" onClick={() => setMedicoToDelete(row)}>
+            <DeleteIcon />
+          </IconButton>
+        </Box>
+      ),
+    },
+  ];
+
+  const loadMedicos = async () => {
+    try {
+      const medicosDB = await medicoService.get();
+      setMedicos(medicosDB);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!medicoToDelete) return;
+
+    // await medicoService.delete(medicoToDelete.id);
+    console.log("Delete: ", medicoToDelete);
+    setMedicoToDelete(null);
+    loadMedicos();
+  };
+
+  const handleSubmit = async (dataForm: any) => {
+    if (medicoEdit) {
+      console.log("Update: ", dataForm);
+      // await medicoService.update(medicoEdit.id, dataForm);
+    } else {
+      console.log("Create: ", dataForm);
+      // await medicoService.create(dataForm);
+    }
+    loadMedicos();
+  };
+
+  useEffect(() => {
+    loadMedicos();
+  }, []);
+
+  return (
+    <Box p={3}>
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={2}
+      >
+        <Typography variant="h5">Gerenciamento de Médicos</Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setOpenForm(true)}
+        >
+          Adicionar médico
+        </Button>
+      </Stack>
+
+      <Paper elevation={2}>
+        {loading ? (
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <CircularProgress size={20} color="inherit" />
+            Carregando...
+          </Box>
+        ) : (
+          <DefaultTable
+            columns={columnsTable}
+            rows={medicos}
+            getRowId={(m) => m.id}
+          />
+        )}
+      </Paper>
+
+      <Dialog open={!!medicoToDelete} onClose={() => setMedicoToDelete(null)}>
+        <DialogTitle>Excluir médico</DialogTitle>
+        <DialogContent>
+          Tem certeza que deseja excluir <strong>{medicoToDelete?.nome}</strong> ?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setMedicoToDelete(null)}>Cancelar</Button>
+          <Button color="error" onClick={handleDelete}>
+            Excluir
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <MedicoFormModal
+        open={openForm}
+        onClose={() => setOpenForm(false)}
+        onSubmit={handleSubmit}
+        medico={medicoEdit}
+      />
+    </Box>
+  );
+};
+
+export default Medicos;
