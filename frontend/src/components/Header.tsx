@@ -13,13 +13,13 @@ import {
 } from "@mui/material";
 import { Menu as MenuIcon } from "@mui/icons-material";
 import logo from "../assets/CuraeClinic_logo2.svg";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { normalizeUrl } from "../utils/headerUtils";
 import secretarioService from "../services/secretarioService";
 
 const pages = ["Pacientes", "Médicos", "Consultas"];
-const settings = ["Perfil", "Conta", "Dashboard"];
+const settings = ["Perfil", "Configurações", "Dashboard"];
 
 const Header = () => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
@@ -28,6 +28,11 @@ const Header = () => {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
+  const [userName, setUserName] = useState<string | undefined>();
+  useEffect(() => {
+    setUserName(sessionStorage.getItem("userName")|| localStorage.getItem("userName") || undefined);
+  })
+
   const navigate = useNavigate();
 
   function handleOpenNavMenu(event: React.MouseEvent<HTMLElement>) {
@@ -145,7 +150,7 @@ const Header = () => {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Configurações da conta">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jp" />
+                <Avatar alt={userName} src="/static/images/avatar/2.jp" />
               </IconButton>
             </Tooltip>
             <Menu

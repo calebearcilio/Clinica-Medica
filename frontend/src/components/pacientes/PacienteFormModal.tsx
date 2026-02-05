@@ -15,9 +15,16 @@ import { useEffect, useState } from "react";
 type PacienteFormData = {
   nome: string;
   cpf: string;
-  telefone: string | undefined;
+  telefone?: string;
   email: string;
   dataNascimento: string;
+};
+
+type Props = {
+  open: boolean;
+  onClose: () => void;
+  onSubmit: (data: PacienteFormData) => Promise<void>;
+  paciente?: Paciente | null;
 };
 
 const empityForm: PacienteFormData = {
@@ -26,13 +33,6 @@ const empityForm: PacienteFormData = {
   telefone: "",
   email: "",
   dataNascimento: "",
-};
-
-type Props = {
-  open: boolean;
-  onClose: () => void;
-  onSubmit: (data: PacienteFormData) => Promise<void>;
-  paciente?: Paciente | null;
 };
 
 const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
@@ -68,7 +68,7 @@ const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>
-        {paciente ? "Editar paciente" : "Adicionar paciente"}
+        {paciente ? "Editar paciente" : "Cadastrar novo paciente"}
       </DialogTitle>
 
       <DialogContent>
@@ -108,20 +108,21 @@ const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
             type="date"
             value={form.dataNascimento}
             onChange={handleInputChange}
+            slotProps={{ inputLabel: { shrink: true } }}
             fullWidth
           />
         </Stack>
       </DialogContent>
 
       <DialogActions>
-        <Button variant="outlined" color="error" onClick={onClose} fullWidth>
+        <Button variant="outlined" color="error" onClick={onClose}>
           Cancelar
         </Button>
         <Button
           variant="contained"
+          color="primary"
           onClick={handleSubmit}
           disabled={loading}
-          fullWidth
         >
           {loading ? (
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>

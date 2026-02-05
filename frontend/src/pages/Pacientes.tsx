@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -8,11 +9,6 @@ import {
   IconButton,
   Paper,
   Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
   Typography,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
@@ -21,6 +17,7 @@ import { useEffect, useState } from "react";
 import type { Paciente } from "../types/paciente";
 import pacienteService from "../services/pacienteService";
 import PacienteFormModal from "../components/pacientes/PacienteFormModal";
+import DefaultTable, { type Column } from "../components/DefaultTable";
 
 const Pacientes = () => {
   const [pacientes, setPacientes] = useState<Paciente[]>([]);
@@ -30,6 +27,34 @@ const Pacientes = () => {
   const [pacienteEdit, setPacienteEdit] = useState<Paciente | null>(null);
   const [openForm, setOpenForm] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+
+  const columnsTable: Column<Paciente>[] = [
+    { id: "nome", label: "Nome" },
+    { id: "cpf", label: "CPF" },
+    { id: "telefone", label: "Telefone" },
+    { id: "email", label: "Email" },
+    {
+      id: "id",
+      label: "Ações",
+      align: "right",
+      format: (_, row) => (
+        <Box>
+          <IconButton
+            color="primary"
+            onClick={() => {
+              setPacienteEdit(row);
+              setOpenForm(true);
+            }}
+          >
+            <EditIcon />
+          </IconButton>
+          <IconButton color="error" onClick={() => setPacienteToDelete(row)}>
+            <DeleteIcon />
+          </IconButton>
+        </Box>
+      ),
+    },
+  ];
 
   const loadPacientes = async () => {
     setLoading(true);
@@ -41,10 +66,6 @@ const Pacientes = () => {
     }
   };
 
-  useEffect(() => {
-    loadPacientes();
-  }, []);
-
   const handleDelete = async () => {
     if (!pacienteToDelete) return;
 
@@ -53,16 +74,18 @@ const Pacientes = () => {
     loadPacientes();
   };
 
-  const handleSubmitPaciente = async (dataForm: any) => {
+  const handleSubmit = async (dataForm: any) => {
     if (pacienteEdit) {
-      console.log("Update: ", dataForm)
       await pacienteService.update(pacienteEdit.id, dataForm);
     } else {
-      console.log("Create: ", dataForm)
       await pacienteService.create(dataForm);
     }
     loadPacientes();
   };
+
+  useEffect(() => {
+    loadPacientes();
+  }, []);
 
   return (
     <Box p={3}>
@@ -86,53 +109,18 @@ const Pacientes = () => {
       </Stack>
 
       <Paper elevation={2}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>CPF</TableCell>
-              <TableCell>Nome</TableCell>
-              <TableCell>Telefone</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell align="right">Ações</TableCell>
-            </TableRow>
-          </TableHead>
-
-          <TableBody>
-            {pacientes.map((paciente) => (
-              <TableRow key={paciente.id} hover>
-                <TableCell>{paciente.cpf}</TableCell>
-                <TableCell>{paciente.nome}</TableCell>
-                <TableCell>{paciente.telefone}</TableCell>
-                <TableCell>{paciente.email}</TableCell>
-                <TableCell align="right">
-                  <IconButton
-                    color="primary"
-                    onClick={() => {
-                      setPacienteEdit(paciente);
-                      setOpenForm(true);
-                    }}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton
-                    color="error"
-                    onClick={() => setPacienteToDelete(paciente)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-
-            {!loading && pacientes.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={5} align="center">
-                  Nenhum paciente cadastrado
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+        {loading ? (
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <CircularProgress size={20} color="inherit" />
+            Carregando...
+          </Box>
+        ) : (
+          <DefaultTable
+            columns={columnsTable}
+            rows={pacientes}
+            getRowId={(m) => m.id}
+          />
+        )}
       </Paper>
       {/* Confirmação de exclusão */}
       <Dialog
@@ -142,7 +130,7 @@ const Pacientes = () => {
         <DialogTitle>Excluir paciente</DialogTitle>
         <DialogContent>
           Tem certeza que deseja excluir{" "}
-          <strong>{pacienteToDelete?.nome}</strong>
+          <strong>{pacienteToDelete?.nome}</strong> ?
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setPacienteToDelete(null)}>Cancelar</Button>
@@ -155,7 +143,7 @@ const Pacientes = () => {
       <PacienteFormModal
         open={openForm}
         onClose={() => setOpenForm(false)}
-        onSubmit={handleSubmitPaciente}
+        onSubmit={handleSubmit}
         paciente={pacienteEdit}
       />
     </Box>
