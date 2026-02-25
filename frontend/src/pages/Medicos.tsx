@@ -17,7 +17,8 @@ import DefaultTable, { type Column } from "../components/DefaultTable";
 import type { Medico } from "../types/medico";
 import { useEffect, useState } from "react";
 import medicoService from "../services/medicoService";
-import MedicoFormModal from "../components/medicos/MedicoFormModal";
+import MedicoFormModal from "../components/formsModal/MedicoFormModal";
+import { sortMedicosByCreateData } from "../utils/dashboardUtils";
 
 const Medicos = () => {
   const [medicos, setMedicos] = useState<Medico[]>([]);
@@ -25,6 +26,8 @@ const Medicos = () => {
   const [medicoEdit, setMedicoEdit] = useState<Medico | null>(null);
   const [openForm, setOpenForm] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+
+  const recentsMedicos = sortMedicosByCreateData(medicos)
 
   const columnsTable: Column<Medico>[] = [
     { id: "nome", label: "Nome" },
@@ -67,19 +70,16 @@ const Medicos = () => {
   const handleDelete = async () => {
     if (!medicoToDelete) return;
 
-    // await medicoService.delete(medicoToDelete.id);
-    console.log("Delete: ", medicoToDelete);
+    await medicoService.delete(medicoToDelete.id);
     setMedicoToDelete(null);
     loadMedicos();
   };
 
   const handleSubmit = async (dataForm: any) => {
     if (medicoEdit) {
-      console.log("Update: ", dataForm);
-      // await medicoService.update(medicoEdit.id, dataForm);
+      await medicoService.update(medicoEdit.id, dataForm);
     } else {
-      console.log("Create: ", dataForm);
-      // await medicoService.create(dataForm);
+      await medicoService.create(dataForm);
     }
     loadMedicos();
   };
@@ -115,7 +115,7 @@ const Medicos = () => {
         ) : (
           <DefaultTable
             columns={columnsTable}
-            rows={medicos}
+            rows={recentsMedicos}
             getRowId={(m) => m.id}
           />
         )}

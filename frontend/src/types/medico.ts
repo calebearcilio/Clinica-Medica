@@ -4,8 +4,10 @@ export type Medico = {
   email: string;
   crm: string;
   especialidade: string;
-  telefone?: string
-}
+  telefone?: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
-export type CreateMedicoData = Omit<Medico, "id">;
+export type CreateMedicoData = Omit<Medico, "id" | "createdAt" | "updatedAt">;
 export type UpdateMedicoData = Partial<CreateMedicoData>;

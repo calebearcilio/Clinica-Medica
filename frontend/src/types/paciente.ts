@@ -6,7 +6,8 @@ export type Paciente = {
   telefone?: string;
   dataNascimento: string; // É melhor que seja string do que Date, para evitar de converter Date para string manualmente
   createdAt: string;
+  updatedAt: string;
 }
 
-export type CreatePacienteData = Omit<Paciente, "id" | "createdAt">;
+export type CreatePacienteData = Omit<Paciente, "id" | "createdAt" | "updatedAt">;
 export type UpdatePacienteData = Partial<CreatePacienteData>;

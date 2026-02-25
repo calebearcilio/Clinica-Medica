@@ -16,8 +16,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useEffect, useState } from "react";
 import type { Paciente } from "../types/paciente";
 import pacienteService from "../services/pacienteService";
-import PacienteFormModal from "../components/pacientes/PacienteFormModal";
+import PacienteFormModal from "../components/formsModal/PacienteFormModal";
 import DefaultTable, { type Column } from "../components/DefaultTable";
+import { sortPacientesByCreateData } from "../utils/dashboardUtils";
 
 const Pacientes = () => {
   const [pacientes, setPacientes] = useState<Paciente[]>([]);
@@ -28,6 +29,8 @@ const Pacientes = () => {
   const [openForm, setOpenForm] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
+  const recentPatientes = sortPacientesByCreateData(pacientes);
+  
   const columnsTable: Column<Paciente>[] = [
     { id: "nome", label: "Nome" },
     { id: "cpf", label: "CPF" },
@@ -117,7 +120,7 @@ const Pacientes = () => {
         ) : (
           <DefaultTable
             columns={columnsTable}
-            rows={pacientes}
+            rows={recentPatientes}
             getRowId={(m) => m.id}
           />
         )}

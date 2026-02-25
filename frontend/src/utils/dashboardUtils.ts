@@ -1,4 +1,5 @@
 import type { Consulta } from "../types/consulta";
+import type { Medico } from "../types/medico";
 import type { Paciente } from "../types/paciente";
 
 export function consultasToday(consultas: Consulta[]): Consulta[] | null {
@@ -17,7 +18,16 @@ export function sortConsultasByData(consultas: Consulta[]): Consulta[] {
 export function sortPacientesByCreateData(pacientes: Paciente[]): Paciente[] {
   return [...pacientes].sort(
     (pacienteA, pacienteB) =>
-      new Date(pacienteA.createdAt).getTime() -
-      new Date(pacienteB.createdAt).getTime()
+      new Date(pacienteA.updatedAt).getTime() -
+      new Date(pacienteB.updatedAt).getTime()
   );
 }
+
+export function sortMedicosByCreateData(medicos: Medico[]): Medico[] {
+  return [...medicos].sort(
+    (medicoA, medicoB) =>
+      new Date(medicoA.updatedAt).getTime() -
+      new Date(medicoB.updatedAt).getTime()
+  );
+}
+

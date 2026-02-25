@@ -55,7 +55,27 @@ const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setForm({ ...form, [name]: value });
+
+    if (name === "cpf") {
+      event.currentTarget.maxLength = 14;
+      const valueMasked = value
+        .replace(/\D/g, "")
+        .replace(/(\d{3})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d{1,2})/, "$1-$2")
+        .replace(/(-\d{2})\d+?$/, "$1");
+      setForm({ ...form, [name]: valueMasked });
+    } else if (name === "telefone") {
+      event.currentTarget.maxLength = 19;
+      const valueMasked = value
+        .replace(/\D/g, "")
+        .replace(/^(\d{2})(\d)/g, "+$1 ($2")
+        .replace(/(\d{2})(\d)/, "$1) $2")
+        .replace(/(\d{5})(\d)/, "$1-$2");
+      setForm({ ...form, [name]: valueMasked });
+    } else {
+      setForm({ ...form, [name]: value });
+    }
   };
 
   const handleSubmit = async () => {
@@ -72,7 +92,7 @@ const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
       </DialogTitle>
 
       <DialogContent>
-        <Stack spacing={3} mb={1}>
+        <Stack spacing={3} m={1}>
           <TextField
             label="Nome"
             name="nome"
@@ -83,6 +103,7 @@ const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
           <TextField
             label="CPF"
             name="cpf"
+            placeholder="000.000.000-00"
             value={form.cpf}
             onChange={handleInputChange}
             fullWidth
@@ -90,6 +111,7 @@ const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
           <TextField
             label="Telefone"
             name="telefone"
+            placeholder="+55 (00) 90000-0000"
             value={form.telefone}
             onChange={handleInputChange}
             fullWidth

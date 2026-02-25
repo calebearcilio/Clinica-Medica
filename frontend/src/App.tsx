@@ -6,7 +6,7 @@ import Login from "./pages/Login";
 import Pacientes from "./pages/Pacientes";
 import Medicos from "./pages/Medicos";
 import Consultas from "./pages/Consultas";
-import Account from "./pages/Account";
+import Config from "./pages/Config";
 import Profile from "./pages/Profile";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -42,8 +42,8 @@ function App() {
             element={<ProtectedRoute children={<Consultas />} />}
           />
           <Route
-            path="/conta"
-            element={<ProtectedRoute children={<Account />} />}
+            path="/configuracoes"
+            element={<ProtectedRoute children={<Config />} />}
           />
           <Route
             path="/perfil"
