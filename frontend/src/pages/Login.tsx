@@ -16,52 +16,68 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { validateLogin } from "../schemas/validations";
+import { validateSchema } from "../schemas/validations";
 import PopupMessage from "../components/messages/PopupMessage";
 import { useNavigate } from "react-router-dom";
 import secretarioService from "../services/secretarioService";
+import { loginSchema } from "../schemas/loginSchema";
 
 const Login = () => {
   const navegate = useNavigate();
-  const [formData, setFormData] = useState<{ email: string; senha: string }>({
+  const [formData, setFormData] = useState<{ email: string; senha: string; keepLogin: boolean }>({
     email: "",
     senha: "",
+    keepLogin: false,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [msgErro, setMsgErro] = useState<string>("");
-  const [msgSuccess, setMsgSuccess] = useState<string>("");
+  const [msg, setMsg] = useState<{
+    severity: "error" | "success" | "info" | "warning" | undefined;
+    msg: string;
+    open: boolean;
+  }>({
+    severity: undefined,
+    msg: "",
+    open: false,
+  });
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [keepLogin, setKeepLogin] = useState<boolean>(false); // caixa de seleção "Manter logado"
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target;
     setFormData((form) => ({ ...form, [name]: value }));
     setErrors((message) => ({ ...message, [name]: "" }));
-    setMsgErro("");
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const validate = validateLogin(formData);
+    const validate = validateSchema(formData, loginSchema);
     if (!validate.isValid) {
       setErrors(validate.errors);
-      setMsgErro("Erro ao realizar login. Verifique suas credenciais.");
+      setMsg({
+        severity: "error",
+        msg: "Erro ao realizar login. Verifique suas credenciais.",
+        open: true
+      });
       return;
     }
 
     setIsLoading(true);
-    setMsgErro("");
-    setMsgSuccess("");
+    setMsg({
+      severity: undefined,
+      msg: "",
+      open: false,
+    });
     try {
       const secretario = await secretarioService.login(
         formData.email,
         formData.senha,
-        keepLogin
+        formData.keepLogin
       );
-      setMsgSuccess(
-        `Login realizado com sucesso! Bem-vindo, ${secretario.nome}.`
-      );
+      setMsg({
+        severity: "success",
+        msg: `Login realizado com sucesso! Bem-vindo, ${secretario.nome}.`,
+        open: true
+      });
       setTimeout(() => {
         navegate("/dashboard", { replace: true });
       }, 1000);
@@ -70,11 +86,19 @@ const Login = () => {
         const message = error.message.split(".")[0];
         const key = error.message.split(" ")[0].toLowerCase();
 
-        setMsgErro(error.message);
+        setMsg({
+          severity: "error",
+          msg: error.message,
+          open: true
+        });
         setErrors({ [key]: message });
         return;
       }
-      setMsgErro("Erro interno. Tente novamente mais tarde.");
+      setMsg({
+        severity: "error",
+        msg: "Erro interno. Tente novamente mais tarde.",
+        open: true,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -90,21 +114,12 @@ const Login = () => {
       }}
     >
       <PopupMessage
-        open={!!msgSuccess}
+        open={msg.open}
         onClose={() => {
-          setMsgSuccess("");
+          setMsg((msg) => ({ ...msg, open: false }));
         }}
-        message={msgSuccess}
-        severity="success"
-      />
-
-      <PopupMessage
-        open={!!msgErro}
-        onClose={() => {
-          setMsgErro("");
-        }}
-        message={msgErro}
-        severity="error"
+        message={msg.msg}
+        severity={msg.severity}
       />
 
       <Paper sx={{ p: 2, width: "80vh" }} elevation={7}>
@@ -155,9 +170,9 @@ const Login = () => {
           <FormControlLabel
             control={
               <Checkbox
-                checked={keepLogin}
+                checked={formData.keepLogin}
                 onChange={(event) => {
-                  setKeepLogin(event.target.checked);
+                  setFormData((form) => ({...form, keepLogin: event.target.checked}));
                 }}
               />
             }

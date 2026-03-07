@@ -11,6 +11,9 @@ import {
 } from "@mui/material";
 import type { Medico } from "../../types/medico";
 import { useEffect, useState } from "react";
+import { validateSchema } from "../../schemas/validations";
+import { createMedicoSchema, updateMedicoSchema } from "../../schemas/medicoSchema";
+import PopupMessage from "../messages/PopupMessage";
 
 type MedicoFormData = {
   nome: string;
@@ -38,6 +41,17 @@ const empityForm: MedicoFormData = {
 const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
   const [form, setForm] = useState<MedicoFormData>(empityForm);
   const [loading, setLoading] = useState<boolean>(false);
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [msg, setMsg] = useState<{
+      severity: "error" | "success" | "info" | "warning" | undefined;
+      msg: string;
+      open: boolean;
+    }>({
+      severity: undefined,
+      msg: "",
+      open: false,
+    });
+  
 
   useEffect(() => {
     if (medico) {
@@ -69,13 +83,53 @@ const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
   };
 
   const handleSubmit = async () => {
+
+    const validate = validateSchema(form, (medico ? updateMedicoSchema : createMedicoSchema))
+
+    if(!validate.isValid){
+      setErrors(validate.errors);
+      setMsg({
+      severity: "error",
+      msg: "Erro ao" + (medico ? "cadastrar" : "acidionar") + "médico, verifique as credenciais",
+      open: true,
+    });
+      return;
+    }
+
+
     setLoading(true);
-    await onSubmit(form);
-    setLoading(false);
-    onClose();
+    setMsg({
+      severity: undefined,
+      msg: "",
+      open: false,
+    });
+    try {
+      await onSubmit(form);
+      setMsg({
+      severity: "success",
+      msg: "Médico " + (medico ? "cadastrado" : "acidionado") + " com sucesso",
+      open: false,
+    });
+    } catch (error: any) {
+      
+    } finally {
+      setLoading(false);
+      onClose();
+    }
   };
+
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+
+      <PopupMessage
+        open={msg.open}
+        onClose={() => {
+          setMsg((msg) => ({ ...msg, open: false }));
+        }}
+        message={msg.msg}
+        severity={msg.severity}
+      />
+
       <DialogTitle>
         {medico ? "Editar médico" : "Cadastrar novo médico"}
       </DialogTitle>
@@ -87,6 +141,9 @@ const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
             name="nome"
             value={form.nome}
             onChange={handleInputChange}
+            error={!!errors.nome}
+            helperText={errors.nome}
+            disabled={loading}
             fullWidth
           />
           <TextField
@@ -94,6 +151,9 @@ const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
             name="especialidade"
             value={form.especialidade}
             onChange={handleInputChange}
+            error={!!errors.especialidade}
+            helperText={errors.especialidade}
+            disabled={loading}
             fullWidth
           />
           <TextField
@@ -102,6 +162,9 @@ const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
             placeholder="CRMx-000"
             value={form.crm}
             onChange={handleInputChange}
+            error={!!errors.crm}
+            helperText={errors.crm}
+            disabled={loading}
             fullWidth
           />
           <TextField
@@ -110,6 +173,9 @@ const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
             placeholder="+55 (00) 90000-0000"
             value={form.telefone}
             onChange={handleInputChange}
+            error={!!errors.telefone}
+            helperText={errors.telefone}
+            disabled={loading}
             fullWidth
           />
           <TextField
@@ -117,6 +183,9 @@ const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
             name="email"
             value={form.email}
             onChange={handleInputChange}
+            error={!!errors.email}
+            helperText={errors.email}
+            disabled={loading}
             fullWidth
           />
         </Stack>

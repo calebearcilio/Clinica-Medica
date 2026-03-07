@@ -27,7 +27,7 @@ const Medicos = () => {
   const [openForm, setOpenForm] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const recentsMedicos = sortMedicosByCreateData(medicos)
+  const recentsMedicos = sortMedicosByCreateData(medicos);
 
   const columnsTable: Column<Medico>[] = [
     { id: "nome", label: "Nome" },
@@ -107,24 +107,18 @@ const Medicos = () => {
       </Stack>
 
       <Paper elevation={2}>
-        {loading ? (
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <CircularProgress size={20} color="inherit" />
-            Carregando...
-          </Box>
-        ) : (
-          <DefaultTable
-            columns={columnsTable}
-            rows={recentsMedicos}
-            getRowId={(m) => m.id}
-          />
-        )}
+        <DefaultTable
+          columns={columnsTable}
+          rows={recentsMedicos}
+          getRowId={(m) => m.id}
+        />
       </Paper>
 
       <Dialog open={!!medicoToDelete} onClose={() => setMedicoToDelete(null)}>
         <DialogTitle>Excluir médico</DialogTitle>
         <DialogContent>
-          Tem certeza que deseja excluir <strong>{medicoToDelete?.nome}</strong> ?
+          Tem certeza que deseja excluir <strong>{medicoToDelete?.nome}</strong>{" "}
+          ?
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setMedicoToDelete(null)}>Cancelar</Button>

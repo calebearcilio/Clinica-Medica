@@ -1,9 +1,8 @@
 import z from "zod";
-import { loginSchema } from "./loginSchema";
 
-export const validateLogin = (data: unknown) => {
+export const validateSchema = (data: unknown, schema: z.Schema) => {
   try {
-    const validatedData = loginSchema.parse(data);
+    const validatedData = schema.parse(data);
     return { isValid: true as const, data: validatedData };
   } catch (error: any) {
     if (error instanceof z.ZodError) {
