@@ -35,14 +35,20 @@ PORT=3000
 
 3. instale as dependências:
 
-```Bach
+```bash
 npm run setup
 ```
 
 4. Inicie o servidor:
 
-```Bach
-npm run dev
+```bash
+npm run dev:api
+```
+
+5. Inicie o frontend
+
+```bash
+npm run dev:frontend
 ```
 
 ## Scripts disponíveis

@@ -10,6 +10,8 @@ import {
   Checkbox,
   CircularProgress,
   FormControlLabel,
+  IconButton,
+  InputAdornment,
   Link,
   Paper,
   TextField,
@@ -21,15 +23,19 @@ import PopupMessage from "../components/messages/PopupMessage";
 import { useNavigate } from "react-router-dom";
 import secretarioService from "../services/secretarioService";
 import { loginSchema } from "../schemas/loginSchema";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 const Login = () => {
   const navegate = useNavigate();
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [formData, setFormData] = useState<{ email: string; senha: string; keepLogin: boolean }>({
     email: "",
     senha: "",
     keepLogin: false,
   });
-  const [errors, setErrors] = useState<Record<string, string>>({});
   const [msg, setMsg] = useState<{
     severity: "error" | "success" | "info" | "warning" | undefined;
     msg: string;
@@ -39,7 +45,6 @@ const Login = () => {
     msg: "",
     open: false,
   });
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target;
@@ -149,14 +154,14 @@ const Login = () => {
               disabled={isLoading}
               fullWidth
               required
-            ></TextField>
+            />
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <FontAwesomeIcon icon={faLock} />
             <TextField
               label="Senha"
               name="senha"
-              type="password"
+              type={showPassword ? "text" : "password"}
               margin="normal"
               onChange={handleInputChange}
               value={formData.senha}
@@ -165,7 +170,19 @@ const Login = () => {
               disabled={isLoading}
               fullWidth
               required
-            ></TextField>
+              // Ícone de visibilidade da senha
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                        {showPassword ? <VisibilityIcon/> : <VisibilityOffIcon/>}
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }
+              }}
+            />
           </Box>
           <FormControlLabel
             control={
