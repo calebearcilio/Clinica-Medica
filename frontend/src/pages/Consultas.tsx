@@ -1,22 +1,38 @@
 import { useEffect, useState } from "react";
-import { Button, Box, Typography, Paper, Stack } from "@mui/material";
-import type { Consulta } from "../types/consulta";
+import {
+  Button,
+  Box,
+  Typography,
+  Paper,
+  Stack,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import type { Consulta, CreateConsultaData } from "../types/consulta";
 import consultaService from "../services/consultaService";
 import DefaultTable, { type Column } from "../components/DefaultTable";
+import ConsultaFormModal from "../components/formsModal/ConsultaFormModal";
 
 export default function ConsultasPage() {
   const [consultas, setConsultas] = useState<Consulta[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [openModal, setOpenModal] = useState(false);
-  const [selectedConsulta, setSelectedConsulta] = useState<Consulta | null>(
+  const [consultaToEdit, setConsultaToEdit] = useState<Consulta | null>(null);
+  const [consultaToDelete, setConsultaToDelete] = useState<Consulta | null>(
     null,
   );
+  const [loading, setLoading] = useState<boolean>(true);
+  const [openModal, setOpenModal] = useState<boolean>(false);
+
 
   const columnsTable: Column<Consulta>[] = [
     {
       id: "dataHora",
       label: "Data",
-      format: (_, row) => <Typography >{row.dataHora.slice(0, 10)}</Typography>,
+      format: (_, row) => <Typography>{row.dataHora.slice(0, 10)}</Typography>,
     },
     { id: "descricao", label: "Descrição" },
     { id: "medico", label: "Médico", format: (_, row) => row.medico.nome },
@@ -26,33 +42,71 @@ export default function ConsultasPage() {
       format: (_, row) => row.paciente.nome,
     },
     // { id: "status", label: "Status" },
+    {
+      id: "id",
+      label: "Ações",
+      align: "right",
+      format: (_, row) => (
+        <Box>
+          <IconButton
+            color="primary"
+            onClick={() => {
+              setConsultaToEdit(row);
+              setOpenModal(true);
+            }}
+          >
+            <EditIcon />
+          </IconButton>
+          <IconButton color="error" onClick={() => setConsultaToDelete(row)}>
+            <DeleteIcon />
+          </IconButton>
+        </Box>
+      ),
+    },
   ];
 
   async function loadConsultas() {
     setLoading(true);
-    const data = await consultaService.get();
-    setConsultas(data);
-    setLoading(false);
+    try {
+      const consultasDB = await consultaService.get();
+      setConsultas(consultasDB);
+    } catch (error: any) {
+      // tratamento de erros
+    } finally {
+      setLoading(false);
+    }
   }
 
+  async function handleDelete() {
+    if (!consultaToDelete) return;
+
+    try {
+      await consultaService.delete(consultaToDelete.id);
+      setConsultaToDelete(null);
+    } catch (error: any) {
+      // tratamento de erros
+    } finally {
+      loadConsultas();
+    }
+  }
+
+  async function handleSubmit(dataForm: CreateConsultaData) {
+    try {
+      if (consultaToEdit) {
+        await consultaService.update(consultaToEdit.id, dataForm);
+      } else {
+        await consultaService.create(dataForm);
+      }
+    } catch (error: any) {
+      // tratamento de erros
+    } finally {
+      loadConsultas();
+    }
+  }
+  
   useEffect(() => {
     loadConsultas();
   }, []);
-
-  function handleCreate() {
-    setSelectedConsulta(null);
-    setOpenModal(true);
-  }
-
-  function handleEdit(consulta: Consulta) {
-    setSelectedConsulta(consulta);
-    setOpenModal(true);
-  }
-
-  async function handleDelete(id: number) {
-    await consultaService.delete(id);
-    loadConsultas();
-  }
 
   return (
     <Box p={3}>
@@ -63,7 +117,14 @@ export default function ConsultasPage() {
         mb={2}
       >
         <Typography variant="h5">Consultas</Typography>
-        <Button variant="contained" color="primary">
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            setConsultaToEdit(null);
+            setOpenModal(true);
+          }}
+        >
           Nova consulta
         </Button>
       </Stack>
@@ -75,13 +136,31 @@ export default function ConsultasPage() {
           columns={columnsTable}
         />
       </Paper>
-      {/* 
+
+      {/* Confirmação de exclusão */}
+      <Dialog
+        open={!!consultaToDelete}
+        onClose={() => setConsultaToDelete(null)}
+      >
+        <DialogTitle>Excluir paciente</DialogTitle>
+        <DialogContent>
+          Tem certeza que deseja excluir a consulta de{" "}
+          <strong>{consultaToDelete?.paciente.nome}</strong> ?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConsultaToDelete(null)}>Cancelar</Button>
+          <Button color="error" onClick={handleDelete}>
+            Excluir
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <ConsultaFormModal
         open={openModal}
         onClose={() => setOpenModal(false)}
-        consulta={selectedConsulta}
-        onSuccess={loadConsultas}
-      /> */}
+        onSubmit={handleSubmit}
+        consulta={consultaToEdit}
+      />
     </Box>
   );
 }

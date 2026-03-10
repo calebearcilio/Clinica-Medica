@@ -59,6 +59,7 @@ const Medicos = () => {
   ];
 
   const loadMedicos = async () => {
+    setLoading(true);
     try {
       const medicosDB = await medicoService.get();
       setMedicos(medicosDB);
@@ -100,7 +101,10 @@ const Medicos = () => {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => setOpenForm(true)}
+          onClick={() => {
+            setMedicoEdit(null);
+            setOpenForm(true);
+          }}
         >
           Adicionar médico
         </Button>

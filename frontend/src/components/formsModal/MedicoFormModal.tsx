@@ -13,15 +13,8 @@ import type { Medico } from "../../types/medico";
 import { useEffect, useState } from "react";
 import { validateSchema } from "../../schemas/validations";
 import { createMedicoSchema, updateMedicoSchema } from "../../schemas/medicoSchema";
-import PopupMessage from "../messages/PopupMessage";
 
-type MedicoFormData = {
-  nome: string;
-  especialidade: string;
-  crm: string;
-  telefone?: string;
-  email: string;
-};
+type MedicoFormData = Omit<Medico, "id" | "createdAt" | "updatedAt">
 
 type Props = {
   open: boolean;
@@ -42,16 +35,6 @@ const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
   const [form, setForm] = useState<MedicoFormData>(empityForm);
   const [loading, setLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<Record<string, string>>({})
-  const [msg, setMsg] = useState<{
-      severity: "error" | "success" | "info" | "warning" | undefined;
-      msg: string;
-      open: boolean;
-    }>({
-      severity: undefined,
-      msg: "",
-      open: false,
-    });
-  
 
   useEffect(() => {
     if (medico) {
@@ -88,30 +71,15 @@ const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
 
     if(!validate.isValid){
       setErrors(validate.errors);
-      setMsg({
-      severity: "error",
-      msg: "Erro ao" + (medico ? "cadastrar" : "acidionar") + "médico, verifique as credenciais",
-      open: true,
-    });
       return;
     }
 
 
     setLoading(true);
-    setMsg({
-      severity: undefined,
-      msg: "",
-      open: false,
-    });
     try {
       await onSubmit(form);
-      setMsg({
-      severity: "success",
-      msg: "Médico " + (medico ? "cadastrado" : "acidionado") + " com sucesso",
-      open: false,
-    });
     } catch (error: any) {
-      
+      // tratamento de erros
     } finally {
       setLoading(false);
       onClose();
@@ -120,15 +88,6 @@ const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-
-      <PopupMessage
-        open={msg.open}
-        onClose={() => {
-          setMsg((msg) => ({ ...msg, open: false }));
-        }}
-        message={msg.msg}
-        severity={msg.severity}
-      />
 
       <DialogTitle>
         {medico ? "Editar médico" : "Cadastrar novo médico"}

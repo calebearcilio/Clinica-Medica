@@ -12,13 +12,7 @@ import {
 import type { Paciente } from "../../types/paciente";
 import { useEffect, useState } from "react";
 
-type PacienteFormData = {
-  nome: string;
-  cpf: string;
-  telefone?: string;
-  email: string;
-  dataNascimento: string;
-};
+type PacienteFormData = Omit<Paciente, "id" | "createdAt" | "updatedAt">
 
 type Props = {
   open: boolean;

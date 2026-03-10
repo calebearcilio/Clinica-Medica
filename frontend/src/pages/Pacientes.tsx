@@ -125,6 +125,7 @@ const Pacientes = () => {
           />
         )}
       </Paper>
+      
       {/* Confirmação de exclusão */}
       <Dialog
         open={!!pacienteToDelete}

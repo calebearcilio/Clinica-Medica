@@ -25,7 +25,7 @@ const consultaService = {
   },
 
   async update(id: number, data: UpdateConsultaData): Promise<Consulta> {
-    const response = await api.patch<Consulta>(
+    const response = await api.put<Consulta>(
       `${API_ENDPOINTS.CONSULTAS}/${id}`,
       data
     );
