@@ -23,7 +23,7 @@ const medicoService = {
   },
 
   async update(id: number, data: UpdateMedicoData): Promise<Medico> {
-    const request = await axios.patch<Medico>(
+    const request = await axios.put<Medico>(
       `${API_ENDPOINTS.MEDICOS}/${id}`,
       data
     );
