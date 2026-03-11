@@ -9,21 +9,19 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import type { Medico } from "../../types/medico";
 import { useEffect, useState } from "react";
+import type { CreateMedicoData, Medico, UpdateMedicoData } from "../../types/medico";
 import { validateSchema } from "../../schemas/validations";
 import { createMedicoSchema, updateMedicoSchema } from "../../schemas/medicoSchema";
-
-type MedicoFormData = Omit<Medico, "id" | "createdAt" | "updatedAt">
 
 type Props = {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: MedicoFormData) => Promise<void>;
+  onSubmit: (data: CreateMedicoData | UpdateMedicoData) => Promise<void>;
   medico?: Medico | null;
 };
 
-const empityForm: MedicoFormData = {
+const empityForm: UpdateMedicoData = {
   nome: "",
   especialidade: "",
   crm: "",
@@ -32,7 +30,7 @@ const empityForm: MedicoFormData = {
 };
 
 const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
-  const [form, setForm] = useState<MedicoFormData>(empityForm);
+  const [form, setForm] = useState<CreateMedicoData | UpdateMedicoData>(empityForm);
   const [loading, setLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<Record<string, string>>({})
 

@@ -16,7 +16,7 @@ const PopupMessage = ({ open, onClose, severity = "info", message }: Props) => {
   return (
     <Snackbar
       open={open}
-      autoHideDuration={3000}
+      autoHideDuration={2000}
       anchorOrigin={{ vertical: "top", horizontal: "right" }}
       slots={{ transition: SlideRight }}
       onClose={onClose}

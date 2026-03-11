@@ -9,19 +9,17 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import type { Paciente } from "../../types/paciente";
 import { useEffect, useState } from "react";
-
-type PacienteFormData = Omit<Paciente, "id" | "createdAt" | "updatedAt">
+import type { CreatePacienteData, Paciente } from "../../types/paciente";
 
 type Props = {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: PacienteFormData) => Promise<void>;
+  onSubmit: (data: CreatePacienteData) => Promise<void>;
   paciente?: Paciente | null;
 };
 
-const empityForm: PacienteFormData = {
+const empityForm: CreatePacienteData = {
   nome: "",
   cpf: "",
   telefone: "",
@@ -30,7 +28,7 @@ const empityForm: PacienteFormData = {
 };
 
 const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
-  const [form, setForm] = useState<PacienteFormData>(empityForm);
+  const [form, setForm] = useState<CreatePacienteData>(empityForm);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -76,7 +74,6 @@ const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
     setLoading(true);
     await onSubmit(form);
     setLoading(false);
-    onClose();
   };
 
   return (

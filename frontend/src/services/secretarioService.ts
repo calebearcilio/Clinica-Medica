@@ -1,13 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { API_ENDPOINTS } from "../config/apiUrl";
-import type { Secretario } from "../types/secretario";
-
-type LoginResponse = {
-  nome: string;
-  email: string;
-  telefone?: string;
-  token: string;
-};
+import type { LoginResponse, LoginSecretarioData, Secretario } from "../types/secretario";
 
 const secretarioService = {
   async get(): Promise<Secretario[]> {
@@ -15,15 +8,15 @@ const secretarioService = {
     return response.data;
   },
 
-  async login(
-    email: string,
-    password: string,
-    keepLogin: boolean = false
-  ): Promise<LoginResponse> {
+  async login({
+    email,
+    senha,
+    keepLogin,
+  }: LoginSecretarioData): Promise<LoginResponse> {
     try {
       const secretario = await axios.post<LoginResponse>(API_ENDPOINTS.LOGIN, {
         email: email,
-        password: password,
+        password: senha,
         keepLogin: keepLogin,
       });
 

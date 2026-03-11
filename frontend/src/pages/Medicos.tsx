@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -115,6 +114,7 @@ const Medicos = () => {
           columns={columnsTable}
           rows={recentsMedicos}
           getRowId={(m) => m.id}
+          isLoading={loading}
         />
       </Paper>
 

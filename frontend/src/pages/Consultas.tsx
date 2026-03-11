@@ -27,7 +27,6 @@ export default function ConsultasPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [openModal, setOpenModal] = useState<boolean>(false);
 
-
   const columnsTable: Column<Consulta>[] = [
     {
       id: "dataHora",
@@ -103,7 +102,7 @@ export default function ConsultasPage() {
       loadConsultas();
     }
   }
-  
+
   useEffect(() => {
     loadConsultas();
   }, []);
@@ -134,6 +133,7 @@ export default function ConsultasPage() {
           getRowId={(m) => m.id}
           rows={consultas}
           columns={columnsTable}
+          isLoading={loading}
         />
       </Paper>
 

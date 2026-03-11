@@ -28,7 +28,7 @@ import {
   sortConsultasByData,
   sortPacientesByCreateData,
 } from "../utils/dashboardUtils";
-import DashboardSkeleton from "../components/dashboard/DeshboardSkeleton";
+import DashboardSkeleton from "../components/skeletons/DeshboardSkeleton";
 import type { Secretario } from "../types/secretario";
 import secretarioService from "../services/secretarioService";
 import StaticMessage from "../components/messages/StaticMessage";
@@ -51,6 +51,29 @@ const Dashboard: React.FC = () => {
   const limitConsultas = 5;
   const [pagePacientes, setPagePacientes] = useState<number>(0);
   const limitPacientes = 5;
+
+  // Ordenação de entidades
+  const consultasSort = sortConsultasByData(consultas);
+  const recentPatientes = sortPacientesByCreateData(pacientes);
+
+  // Paginação de consultas
+  const consultasPaginadas = consultasSort.slice(
+    pageConsultas * limitConsultas,
+    pageConsultas * limitConsultas + limitConsultas,
+  );
+  // Paginação de pacientes
+  const pacientesPaginados = recentPatientes.slice(
+    pagePacientes * limitPacientes,
+    pagePacientes * limitPacientes + limitPacientes,
+  );
+
+  // Status de quantidades
+  const statusAmount = [
+    { label: "Pacientes", value: pacientes.length },
+    { label: "Médicos", value: medicos.length },
+    { label: "Consultas", value: consultas.length },
+    { label: "Secretários", value: secretarios.length },
+  ];
 
   useEffect(() => {
     loadData();
@@ -90,29 +113,6 @@ const Dashboard: React.FC = () => {
       setLoading(false);
     }
   };
-
-  // Status de quantidades
-  const statusAmount = [
-    { label: "Pacientes", value: pacientes.length },
-    { label: "Médicos", value: medicos.length },
-    { label: "Consultas", value: consultas.length },
-    { label: "Secretários", value: secretarios.length },
-  ];
-
-  // Ordenação de entidades
-  const consultasSort = sortConsultasByData(consultas);
-  const recentPatientes = sortPacientesByCreateData(pacientes);
-
-  // Paginação de consultas
-  const consultasPaginadas = consultasSort.slice(
-    pageConsultas * limitConsultas,
-    pageConsultas * limitConsultas + limitConsultas,
-  );
-  // Paginação de pacientes
-  const pacientesPaginados = recentPatientes.slice(
-    pagePacientes * limitPacientes,
-    pagePacientes * limitPacientes + limitPacientes,
-  );
 
   // Carregando dados do servidor
   if (loading) {

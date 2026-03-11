@@ -1,9 +1,12 @@
 import {
   faArrowRightToBracket,
   faLock,
+  faUnlock,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import {
   Box,
   Button,
@@ -18,96 +21,82 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { validateSchema } from "../schemas/validations";
-import PopupMessage from "../components/messages/PopupMessage";
 import { useNavigate } from "react-router-dom";
 import secretarioService from "../services/secretarioService";
 import { loginSchema } from "../schemas/loginSchema";
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import { validateSchema } from "../schemas/validations";
+import { usePopup } from "../components/messages/PopupProvider";
+import type { LoginSecretarioData } from "../types/secretario";
+
+// objeto com informações vazias
+const empityForm = {
+  email: "",
+  senha: "",
+  keepLogin: false,
+};
 
 const Login = () => {
+  // alterar navegação após login
   const navegate = useNavigate();
+  // mostrar possíveis erros nos campos
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  // controle de carregamento
+  const [loading, setLoading] = useState<boolean>(false);
+  // mostrar/esconder senha
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [formData, setFormData] = useState<{ email: string; senha: string; keepLogin: boolean }>({
-    email: "",
-    senha: "",
-    keepLogin: false,
-  });
-  const [msg, setMsg] = useState<{
-    severity: "error" | "success" | "info" | "warning" | undefined;
-    msg: string;
-    open: boolean;
-  }>({
-    severity: undefined,
-    msg: "",
-    open: false,
-  });
+  // informações capturadas no formulário
+  const [formData, setFormData] = useState<LoginSecretarioData>(empityForm);
+  // contexto global da mensagem popup
+  const { showPopup } = usePopup();
 
-  function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+  // função ativada a cada alteração do usuário
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData((form) => ({ ...form, [name]: value }));
     setErrors((message) => ({ ...message, [name]: "" }));
-  }
+  };
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  // função acionada ao enviar o formulário
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault(); // impede de recarregar a página
 
+    // validando os campos com zod
     const validate = validateSchema(formData, loginSchema);
     if (!validate.isValid) {
       setErrors(validate.errors);
-      setMsg({
-        severity: "error",
-        msg: "Erro ao realizar login. Verifique suas credenciais.",
-        open: true
-      });
+      showPopup("Erro ao realizar login. Verifique suas credenciais.", "error");
       return;
     }
 
-    setIsLoading(true);
-    setMsg({
-      severity: undefined,
-      msg: "",
-      open: false,
-    });
+    setLoading(true);
     try {
-      const secretario = await secretarioService.login(
-        formData.email,
-        formData.senha,
-        formData.keepLogin
+      // enviando formulário para o servidor
+      const secretario = await secretarioService.login(formData);
+      showPopup(
+        `Login realizado com sucesso! Bem-vindo, ${secretario.nome}.`,
+        "success",
       );
-      setMsg({
-        severity: "success",
-        msg: `Login realizado com sucesso! Bem-vindo, ${secretario.nome}.`,
-        open: true
-      });
+
+      // empera de 1 segundo para navegar a página
       setTimeout(() => {
         navegate("/dashboard", { replace: true });
       }, 1000);
     } catch (error: any) {
+      // tratamento de erros
       if (error.message) {
+        // resposta do servidor
         const message = error.message.split(".")[0];
         const key = error.message.split(" ")[0].toLowerCase();
-
-        setMsg({
-          severity: "error",
-          msg: error.message,
-          open: true
-        });
+        showPopup(error.message, "error");
         setErrors({ [key]: message });
         return;
       }
-      setMsg({
-        severity: "error",
-        msg: "Erro interno. Tente novamente mais tarde.",
-        open: true,
-      });
+      // erro interno
+      showPopup("Erro interno. Tente novamente mais tarde.", "error");
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <Box
@@ -118,15 +107,6 @@ const Login = () => {
         alignItems: "center",
       }}
     >
-      <PopupMessage
-        open={msg.open}
-        onClose={() => {
-          setMsg((msg) => ({ ...msg, open: false }));
-        }}
-        message={msg.msg}
-        severity={msg.severity}
-      />
-
       <Paper sx={{ p: 2, width: "80vh" }} elevation={7}>
         <Box sx={{ textAlign: "center", mb: 1 }}>
           <FontAwesomeIcon
@@ -151,13 +131,13 @@ const Login = () => {
               value={formData.email}
               error={!!errors.email}
               helperText={errors.email}
-              disabled={isLoading}
+              disabled={loading}
               fullWidth
               required
             />
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <FontAwesomeIcon icon={faLock} />
+            <FontAwesomeIcon icon={showPassword ? faUnlock : faLock} />
             <TextField
               label="Senha"
               name="senha"
@@ -167,7 +147,7 @@ const Login = () => {
               value={formData.senha}
               error={!!errors.senha}
               helperText={errors.senha}
-              disabled={isLoading}
+              disabled={loading}
               fullWidth
               required
               // Ícone de visibilidade da senha
@@ -175,12 +155,19 @@ const Login = () => {
                 input: {
                   endAdornment: (
                     <InputAdornment position="end">
-                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                        {showPassword ? <VisibilityIcon/> : <VisibilityOffIcon/>}
+                      <IconButton
+                        onClick={() => setShowPassword(!showPassword)}
+                        edge="end"
+                      >
+                        {showPassword ? (
+                          <VisibilityIcon />
+                        ) : (
+                          <VisibilityOffIcon />
+                        )}
                       </IconButton>
                     </InputAdornment>
-                  )
-                }
+                  ),
+                },
               }}
             />
           </Box>
@@ -189,7 +176,10 @@ const Login = () => {
               <Checkbox
                 checked={formData.keepLogin}
                 onChange={(event) => {
-                  setFormData((form) => ({...form, keepLogin: event.target.checked}));
+                  setFormData((form) => ({
+                    ...form,
+                    keepLogin: event.target.checked,
+                  }));
                 }}
               />
             }
@@ -201,9 +191,9 @@ const Login = () => {
             color="primary"
             fullWidth
             sx={{ mb: 2 }}
-            disabled={isLoading}
+            disabled={loading}
           >
-            {isLoading ? (
+            {loading ? (
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <CircularProgress size={20} color="inherit" />
                 Carregando...

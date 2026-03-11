@@ -14,9 +14,6 @@ import {
 } from "@mui/material";
 import React from "react";
 
-/**
- * Dashboard sem conteúdo carregado
- */
 const DashboardSkeleton: React.FC = () => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>

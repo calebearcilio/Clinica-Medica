@@ -6,8 +6,15 @@ export type Secretario = {
   telefone?: string;
 }
 
-export type LoginSecretario = {
+export type LoginSecretarioData = {
   email: string;
   senha: string;
+  keepLogin: boolean;
 }
 
+export type LoginResponse = {
+  nome: string;
+  email: string;
+  telefone?: string;
+  token: string;
+};
