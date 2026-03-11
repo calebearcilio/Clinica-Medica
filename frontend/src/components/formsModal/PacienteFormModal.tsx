@@ -11,6 +11,12 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import type { CreatePacienteData, Paciente } from "../../types/paciente";
+import { validateSchema } from "../../schemas/validations";
+import {
+  createPacienteSchema,
+  updatePacienteSchema,
+} from "../../schemas/pacienteSchema";
+import { usePopup } from "../messages/PopupProvider";
 
 type Props = {
   open: boolean;
@@ -19,6 +25,7 @@ type Props = {
   paciente?: Paciente | null;
 };
 
+// objeto com informações vazias
 const empityForm: CreatePacienteData = {
   nome: "",
   cpf: "",
@@ -28,10 +35,17 @@ const empityForm: CreatePacienteData = {
 };
 
 const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
+  // informações capturadas no formulário
   const [form, setForm] = useState<CreatePacienteData>(empityForm);
+  // controle de carregamento
   const [loading, setLoading] = useState<boolean>(false);
+  // mostrar possíveis erros nos campos
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  // contexto global da mensagem popup
+  const { showPopup } = usePopup();
 
   useEffect(() => {
+    setErrors({});
     if (paciente) {
       setForm({
         nome: paciente.nome,
@@ -47,7 +61,7 @@ const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-
+    setErrors((errors) => ({ ...errors, [name]: "" }));
     if (name === "cpf") {
       event.currentTarget.maxLength = 14;
       const valueMasked = value
@@ -71,6 +85,18 @@ const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
   };
 
   const handleSubmit = async () => {
+    // validando os campos com zod
+    const validate = validateSchema(
+      form,
+      paciente ? updatePacienteSchema : createPacienteSchema,
+    );
+
+    if (!validate.isValid) {
+      setErrors(validate.errors);
+      showPopup("Erro ao realizar login. Verifique suas credenciais.", "error");
+      return;
+    }
+
     setLoading(true);
     await onSubmit(form);
     setLoading(false);
@@ -89,6 +115,9 @@ const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
             name="nome"
             value={form.nome}
             onChange={handleInputChange}
+            error={!!errors.nome}
+            helperText={errors.nome}
+            disabled={loading}
             fullWidth
           />
           <TextField
@@ -97,6 +126,9 @@ const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
             placeholder="000.000.000-00"
             value={form.cpf}
             onChange={handleInputChange}
+            error={!!errors.cpf}
+            helperText={errors.cpf}
+            disabled={loading}
             fullWidth
           />
           <TextField
@@ -105,6 +137,9 @@ const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
             placeholder="+55 (00) 90000-0000"
             value={form.telefone}
             onChange={handleInputChange}
+            error={!!errors.telefone}
+            helperText={errors.telefone}
+            disabled={loading}
             fullWidth
           />
           <TextField
@@ -113,6 +148,9 @@ const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
             type="email"
             value={form.email}
             onChange={handleInputChange}
+            error={!!errors.email}
+            helperText={errors.email}
+            disabled={loading}
             fullWidth
           />
           <TextField
@@ -122,6 +160,9 @@ const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
             value={form.dataNascimento}
             onChange={handleInputChange}
             slotProps={{ inputLabel: { shrink: true } }}
+            error={!!errors.dataNascimento}
+            helperText={errors.dataNascimento}
+            disabled={loading}
             fullWidth
           />
         </Stack>

@@ -10,9 +10,16 @@ import {
   TextField,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import type { CreateMedicoData, Medico, UpdateMedicoData } from "../../types/medico";
+import type {
+  CreateMedicoData,
+  Medico,
+  UpdateMedicoData,
+} from "../../types/medico";
 import { validateSchema } from "../../schemas/validations";
-import { createMedicoSchema, updateMedicoSchema } from "../../schemas/medicoSchema";
+import {
+  createMedicoSchema,
+  updateMedicoSchema,
+} from "../../schemas/medicoSchema";
 
 type Props = {
   open: boolean;
@@ -30,11 +37,14 @@ const empityForm: UpdateMedicoData = {
 };
 
 const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
-  const [form, setForm] = useState<CreateMedicoData | UpdateMedicoData>(empityForm);
+  const [form, setForm] = useState<CreateMedicoData | UpdateMedicoData>(
+    empityForm,
+  );
   const [loading, setLoading] = useState<boolean>(false);
-  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
+    setErrors({});
     if (medico) {
       setForm({
         nome: medico.nome,
@@ -50,6 +60,7 @@ const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
+    setErrors((errors) => ({ ...errors, [name]: "" }));
     if (name === "telefone") {
       event.currentTarget.maxLength = 19;
       const valueMasked = value
@@ -64,14 +75,15 @@ const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
   };
 
   const handleSubmit = async () => {
+    const validate = validateSchema(
+      form,
+      medico ? updateMedicoSchema : createMedicoSchema,
+    );
 
-    const validate = validateSchema(form, (medico ? updateMedicoSchema : createMedicoSchema))
-
-    if(!validate.isValid){
+    if (!validate.isValid) {
       setErrors(validate.errors);
       return;
     }
-
 
     setLoading(true);
     try {
@@ -86,7 +98,6 @@ const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-
       <DialogTitle>
         {medico ? "Editar médico" : "Cadastrar novo médico"}
       </DialogTitle>
