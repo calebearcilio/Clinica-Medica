@@ -48,9 +48,13 @@ const secretarioService = {
     id: number,
     data: SecretarioUpdateData
   ): Promise<Omit<Secretario, "senha">> {
+    const updateData = { ...data };
+    if (updateData.senha) {
+      updateData.senha = await bcrypt.hash(updateData.senha, 10);
+    }
     return await prisma.secretario.update({
       where: { id },
-      data,
+      data: updateData,
       omit: { senha: true },
     });
   },

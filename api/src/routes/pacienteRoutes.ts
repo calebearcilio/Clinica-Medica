@@ -6,6 +6,7 @@ import {
   updatePacienteSchema,
 } from "../schemas/pacienteSchema";
 import { idParamSchema } from "../schemas/idParamSchema";
+import { validateAuth } from "../middlewares/authValidation";
 
 const router: Router = Router();
 
@@ -22,13 +23,17 @@ const router: Router = Router();
  *   get:
  *     summary: Retorna todos os pacientes cadastrados no sistema
  *     tags: [Pacientes]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Lista de pacientes
+ *       401:
+ *         description: Token inválido ou expirado
  *       500:
  *         description: Erro interno do servidor
  */
-router.get("/pacientes", pacienteController.getAllPacientes);
+router.get("/pacientes", validateAuth, pacienteController.getAllPacientes);
 
 /**
  * @swagger
@@ -42,11 +47,15 @@ router.get("/pacientes", pacienteController.getAllPacientes);
  *         required: true
  *         schema:
  *           type: integer
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Paciente encontrado
  *       400:
  *         description: ID inválido
+ *       401:
+ *         description: Token inválido ou expirado
  *       404:
  *         description: Paciente não encontrado
  *       500:
@@ -54,6 +63,7 @@ router.get("/pacientes", pacienteController.getAllPacientes);
  */
 router.get(
   "/pacientes/:id",
+  validateAuth,
   validateParams(idParamSchema),
   pacienteController.getPacienteById
 );
@@ -86,16 +96,21 @@ router.get(
  *               dataNascimento:
  *                 type: string
  *                 format: date
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       201:
  *         description: Paciente criado com sucesso
  *       400:
  *         description: Erro na requisição
+ *       401:
+ *         description: Token inválido ou expirado
  *       500:
  *         description: Erro interno do servidor
  */
 router.post(
   "/pacientes",
+  validateAuth,
   validateBody(createPacienteSchema),
   pacienteController.createPaciente
 );
@@ -104,7 +119,7 @@ router.post(
  * @swagger
  * /pacientes/{id}:
  *   put:
- *     summary: Atualiza insformações de um paciente
+ *     summary: Atualiza informações de um paciente
  *     tags: [Pacientes]
  *     parameters:
  *       - in: path
@@ -130,11 +145,15 @@ router.post(
  *               dataNascimento:
  *                 type: string
  *                 format: date
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Paciente atualizado com sucesso
  *       400:
  *         description: Erro na requisição
+ *       401:
+ *         description: Token inválido ou expirado
  *       404:
  *         description: Paciente não encontrado
  *       500:
@@ -142,6 +161,7 @@ router.post(
  */
 router.put(
   "/pacientes/:id",
+  validateAuth,
   validateParams(idParamSchema),
   validateBody(updatePacienteSchema),
   pacienteController.updatePaciente
@@ -159,9 +179,13 @@ router.put(
  *         required: true
  *         schema:
  *           type: integer
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       204:
  *         description: Paciente deletado com sucesso
+ *       401:
+ *         description: Token inválido ou expirado
  *       404:
  *         description: Paciente não encontrado
  *       500:
@@ -169,6 +193,7 @@ router.put(
  */
 router.delete(
   "/pacientes/:id",
+  validateAuth,
   validateParams(idParamSchema),
   pacienteController.deletePaciente
 );

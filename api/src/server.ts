@@ -1,6 +1,7 @@
-import express, { Express } from "express";
+import express, { Express, Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import rateLimit from "express-rate-limit";
 import { setupSwagger } from "./swagger";
 import routes from "./routes";
 
@@ -17,8 +18,22 @@ app.use(
   })
 );
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: "Muitas requisições. Tente novamente mais tarde." },
+});
+app.use(limiter);
+
 setupSwagger(app);
 app.use("", routes);
+
+app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
+  console.error(err.stack);
+  res.status(500).json({ message: "Erro interno no servidor." });
+});
 
 //INICIAR O SERVIDOR
 const PORT = process.env.PORT || 3000;

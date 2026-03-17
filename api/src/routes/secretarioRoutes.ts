@@ -7,6 +7,7 @@ import {
   updateSecretarioSchema,
 } from "../schemas/secretarioSchemas";
 import { idParamSchema } from "../schemas/idParamSchema";
+import { validateAuth } from "../middlewares/authValidation";
 
 const router: Router = Router();
 
@@ -23,13 +24,17 @@ const router: Router = Router();
  *   get:
  *     summary: Retorna todos os secretários cadastrados no sistema
  *     tags: [Secretários]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Lista de secretários
+ *       401:
+ *         description: Token inválido ou expirado
  *       500:
  *         description: Erro interno do servidor
  */
-router.get("/secretarios", secretarioController.getAllSecretarios);
+router.get("/secretarios", validateAuth, secretarioController.getAllSecretarios);
 
 /**
  * @swagger
@@ -43,11 +48,15 @@ router.get("/secretarios", secretarioController.getAllSecretarios);
  *         required: true
  *         schema:
  *           type: integer
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Secretário encontrado
  *       400:
  *         description: ID inválido
+ *       401:
+ *         description: Token inválido ou expirado
  *       404:
  *         description: Secretário não encontrado
  *       500:
@@ -55,6 +64,7 @@ router.get("/secretarios", secretarioController.getAllSecretarios);
  */
 router.get(
   "/secretarios/:id",
+  validateAuth,
   validateParams(idParamSchema),
   secretarioController.getSecretarioById
 );
@@ -123,11 +133,15 @@ router.post(
  *                 type: string
  *               telefone:
  *                 type: string
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Secretário atualizado com sucesso
  *       400:
  *         description: Erro na requisição
+ *       401:
+ *         description: Token inválido ou expirado
  *       404:
  *         description: Secretário não encontrado
  *       500:
@@ -135,6 +149,7 @@ router.post(
  */
 router.put(
   "/secretarios/:id",
+  validateAuth,
   validateParams(idParamSchema),
   validateBody(updateSecretarioSchema),
   secretarioController.updateSecretario
@@ -152,9 +167,13 @@ router.put(
  *         required: true
  *         schema:
  *           type: integer
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       204:
  *         description: Secretário deletado com sucesso
+ *       401:
+ *         description: Token inválido ou expirado
  *       404:
  *         description: Secretário não encontrado
  *       500:
@@ -162,6 +181,7 @@ router.put(
  */
 router.delete(
   "/secretarios/:id",
+  validateAuth,
   validateParams(idParamSchema),
   secretarioController.deleteSecretario
 );
