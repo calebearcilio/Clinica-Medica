@@ -1,9 +1,7 @@
 import { prisma } from "../db/prisma";
 import { Secretario } from "@prisma/client";
 import bcrypt from "bcrypt";
-
-type SecretarioCreateData = Omit<Secretario, "id" | "createdAt" | "updatedAt">;
-type SecretarioUpdateData = Partial<SecretarioCreateData>;
+import { CreateSecretarioData, UpdateSecretarioData } from "../schemas/secretarioSchemas";
 
 const secretarioService = {
   /**
@@ -30,7 +28,7 @@ const secretarioService = {
    * @param data Dados completos do secretário que será adicionado no banco
    * @returns Todos os dados, exeto a senha, do secretário criado
    */
-  async create(data: SecretarioCreateData): Promise<Omit<Secretario, "senha">> {
+  async create(data: CreateSecretarioData): Promise<Omit<Secretario, "senha">> {
     const hashSenha = await bcrypt.hash(data.senha, 10);
     const secretario = await prisma.secretario.create({
       data: { ...data, senha: hashSenha },
@@ -46,7 +44,7 @@ const secretarioService = {
    */
   async update(
     id: number,
-    data: SecretarioUpdateData
+    data: UpdateSecretarioData
   ): Promise<Omit<Secretario, "senha">> {
     return await prisma.secretario.update({
       where: { id },

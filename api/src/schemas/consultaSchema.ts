@@ -2,7 +2,7 @@ import z from "zod";
 
 export const createConsultaSchema = z.object({
   dataHora: z
-    .string()
+    .date()
     .refine((date) => {
       const parsedDate = new Date(date);
       return !isNaN(parsedDate.getTime());
@@ -28,5 +28,5 @@ export const createConsultaSchema = z.object({
 
 export const updateConsultaSchema = createConsultaSchema.partial();
 
-export type CreateConsultaData = z.infer<typeof createConsultaSchema>
-export type UpdateConsultaData = z.infer<typeof updateConsultaSchema>
+export type CreateConsultaData = z.infer<typeof createConsultaSchema>;
+export type UpdateConsultaData = z.infer<typeof updateConsultaSchema>;

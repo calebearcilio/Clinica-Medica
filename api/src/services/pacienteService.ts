@@ -1,8 +1,6 @@
 import { prisma } from "../db/prisma";
 import { Paciente } from "@prisma/client";
-
-type PacienteCreateData = Omit<Paciente, "id" | "createdAt" | "updatedAt">;
-type PacienteUpdateData = Partial<PacienteCreateData>;
+import { CreatePacientedata, UpdatePacientedata } from "../schemas/pacienteSchema";
 
 const pacienteService = {
   async getAll(): Promise<Paciente[]> {
@@ -13,13 +11,13 @@ const pacienteService = {
     return await prisma.paciente.findUnique({ where: { id } });
   },
 
-  async create(data: PacienteCreateData): Promise<Paciente> {
+  async create(data: CreatePacientedata): Promise<Paciente> {
     return await prisma.paciente.create({
       data: { ...data, dataNascimento: new Date(data.dataNascimento) },
     });
   },
 
-  async update(id: number, data: PacienteUpdateData): Promise<Paciente> {
+  async update(id: number, data: UpdatePacientedata): Promise<Paciente> {
     return await prisma.paciente.update({
       where: { id },
       data: {

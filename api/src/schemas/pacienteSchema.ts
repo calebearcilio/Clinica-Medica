@@ -3,14 +3,13 @@ import z from "zod";
 export const createPacienteSchema = z.object({
   nome: z
     .string()
-    .min(2, "Nome deve ter pelo menos 2 caracteres.")
-    .max(100, "Nome deve ter no máximo 100 caracteres."),
+    .max(100, "Nome deve ter no máximo 100 caracteres.")
+    .min(1, "Nome ausente."),
   email: z
-    .email("Email deve ter um formato válido.")
-    .max(255, "Email deve ter no máximo 255 caracteres."),
-  cpf: z
-    .string()
-    .length(14, "CPF deve ter 14 caracteres."),
+    .email("Email inválido.")
+    .max(255, "Email deve ter no máximo 255 caracteres.")
+    .min(1, "Email ausente."),
+  cpf: z.string().length(11, "CPF deve ter 11 caracteres."),
   dataNascimento: z
     .string()
     .refine((date) => {
@@ -21,11 +20,11 @@ export const createPacienteSchema = z.object({
       const parsedDate = new Date(date);
       const today = new Date();
       return parsedDate < today;
-    }, "Data de nascimento deve estar no passado."),
+    }, "Data de nascimento deve estar no passado.")
+    .min(1, "Data de nascimento ausente."),
   telefone: z
     .string()
-    .min(11, "Telefone deve ter pelo menos 11 caracteres.")
-    .max(19, "Telefone deve ter no máximo 19 caracteres.")
+    .max(13, "Telefone deve conter apenas 13 números")
     .optional(),
 });
 

@@ -1,10 +1,6 @@
 import { prisma } from "../db/prisma";
 import { Consulta } from "@prisma/client";
-
-type ConsultaCreateData = Omit<Consulta, "id" | "createdAt" | "updatedAt">;
-type ConsultaUpdateData = Partial<
-  Omit<Consulta, "id" | "createdAt" | "updatedAt" | "pacienteId" | "medicoId">
->;
+import { CreateConsultaData, UpdateConsultaData } from "../schemas/consultaSchema";
 
 const consultaService = {
   async getAll() {
@@ -23,7 +19,7 @@ const consultaService = {
     });
   },
 
-  async create(data: ConsultaCreateData): Promise<Consulta> {
+  async create(data: CreateConsultaData): Promise<Consulta> {
     const { pacienteId, medicoId } = data;
 
     const paciente = await prisma.paciente.findUnique({
@@ -43,7 +39,7 @@ const consultaService = {
     });
   },
 
-  async update(id: number, data: ConsultaUpdateData): Promise<Consulta> {
+  async update(id: number, data: UpdateConsultaData): Promise<Consulta> {
     return prisma.consulta.update({
       where: { id },
       data: {

@@ -26,5 +26,5 @@ export const createMedicoSchema = z.object({
 
 export const updateMedicoSchema = createMedicoSchema.partial();
 
-export type CreateSecretarioData = z.infer<typeof createMedicoSchema>;
-export type UpdateSecretarioData = z.infer<typeof updateMedicoSchema>;
+export type CreateMedicoData = z.infer<typeof createMedicoSchema>;
+export type UpdateMedicoData = z.infer<typeof updateMedicoSchema>;

@@ -1,8 +1,6 @@
 import { prisma } from "../db/prisma";
 import { Medico } from "@prisma/client";
-
-type MedicoCreateData = Omit<Medico, "id" | "createdAt" | "updatedAt">;
-type MedicoUpdateData = Partial<MedicoCreateData>;
+import { CreateMedicoData, UpdateMedicoData } from "../schemas/medicoSchemas";
 
 const medicoService = {
   async getAll(): Promise<Medico[]> {
@@ -13,11 +11,11 @@ const medicoService = {
     return await prisma.medico.findUnique({ where: { id } });
   },
 
-  async create(data: MedicoCreateData): Promise<Medico> {
+  async create(data: CreateMedicoData): Promise<Medico> {
     return await prisma.medico.create({ data: data });
   },
 
-  async update(id: number, data: MedicoUpdateData): Promise<Medico> {
+  async update(id: number, data: UpdateMedicoData): Promise<Medico> {
     return await prisma.medico.update({ where: { id }, data });
   },
 

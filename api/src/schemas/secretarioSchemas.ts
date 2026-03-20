@@ -19,6 +19,7 @@ export const createSecretarioSchema = z.object({
     .optional(),
 });
 
+// Schema para validar dados de entrada ao realizar login
 export const loginSecretarioSchema = z.object({
   email: z.email("Email inválido").min(1, "Email é obrigatório"),
   password: z
