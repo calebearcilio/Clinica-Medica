@@ -56,7 +56,7 @@ router.get("/secretarios", secretarioController.getAllSecretarios);
 router.get(
   "/secretarios/:id",
   validateParams(idParamSchema),
-  secretarioController.getSecretarioById
+  secretarioController.getSecretarioById,
 );
 
 /**
@@ -95,7 +95,7 @@ router.get(
 router.post(
   "/secretarios",
   validateBody(createSecretarioSchema),
-  secretarioController.createSecretario
+  secretarioController.createSecretario,
 );
 
 /**
@@ -137,7 +137,7 @@ router.put(
   "/secretarios/:id",
   validateParams(idParamSchema),
   validateBody(updateSecretarioSchema),
-  secretarioController.updateSecretario
+  secretarioController.updateSecretario,
 );
 
 /**
@@ -163,7 +163,7 @@ router.put(
 router.delete(
   "/secretarios/:id",
   validateParams(idParamSchema),
-  secretarioController.deleteSecretario
+  secretarioController.deleteSecretario,
 );
 
 /**
@@ -202,7 +202,7 @@ router.delete(
 router.post(
   "/secretarios/login",
   validateBody(loginSecretarioSchema),
-  secretarioController.getSecretarioByLogin
+  secretarioController.getSecretarioByLogin,
 );
 
 export default router;

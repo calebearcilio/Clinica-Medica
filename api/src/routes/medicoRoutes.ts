@@ -6,6 +6,7 @@ import {
   updateMedicoSchema,
 } from "../schemas/medicoSchemas";
 import { idParamSchema } from "../schemas/idParamSchema";
+import { validateAuth } from "../middlewares/authValidation";
 
 const router: Router = Router();
 
@@ -22,13 +23,17 @@ const router: Router = Router();
  *   get:
  *     summary: Retorna todos os médicos cadastrados no sistema
  *     tags: [Médicos]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Lista de médicos
+ *       401:
+ *         description: Token inválido ou expirado
  *       500:
  *         description: Erro interno do servidor
  */
-router.get("/medicos", medicoController.getAllMedicos);
+router.get("/medicos", validateAuth, medicoController.getAllMedicos);
 
 /**
  * @swagger
@@ -36,6 +41,8 @@ router.get("/medicos", medicoController.getAllMedicos);
  *   get:
  *     summary: Retorna um médico pelo ID
  *     tags: [Médicos]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -47,6 +54,8 @@ router.get("/medicos", medicoController.getAllMedicos);
  *         description: Médico encontrado
  *       400:
  *         description: ID inválido
+ *       401:
+ *         description: Token inválido ou expirado
  *       404:
  *         description: Médico não encontrado
  *       500:
@@ -54,8 +63,9 @@ router.get("/medicos", medicoController.getAllMedicos);
  */
 router.get(
   "/medicos/:id",
+  validateAuth,
   validateParams(idParamSchema),
-  medicoController.getMedicoById
+  medicoController.getMedicoById,
 );
 
 /**
@@ -64,6 +74,8 @@ router.get(
  *   post:
  *     summary: Adiciona um novo médico no sistema
  *     tags: [Médicos]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -91,13 +103,16 @@ router.get(
  *         description: Médico criado com sucesso
  *       400:
  *         description: Erro na requisição
+ *       401:
+ *         description: Token inválido ou expirado
  *       500:
  *         description: Erro interno do servidor
  */
 router.post(
   "/medicos",
+  validateAuth,
   validateBody(createMedicoSchema),
-  medicoController.createMedico
+  medicoController.createMedico,
 );
 
 /**
@@ -106,6 +121,8 @@ router.post(
  *   put:
  *     summary: Atualiza informações de um médico
  *     tags: [Médicos]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -134,6 +151,8 @@ router.post(
  *         description: Médico atualizado com sucesso
  *       400:
  *         description: Erro na requisição
+ *       401:
+ *         description: Token inválido ou expirado
  *       404:
  *         description: Médico não encontrado
  *       500:
@@ -141,9 +160,10 @@ router.post(
  */
 router.put(
   "/medicos/:id",
+  validateAuth,
   validateParams(idParamSchema),
   validateBody(updateMedicoSchema),
-  medicoController.updateMedico
+  medicoController.updateMedico,
 );
 
 /**
@@ -152,6 +172,8 @@ router.put(
  *   delete:
  *     summary: Remove um médico do sistema
  *     tags: [Médicos]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -163,13 +185,16 @@ router.put(
  *         description: Médico deletado com sucesso
  *       404:
  *         description: Médico não encontrado
+ *       401:
+ *         description: Token inválido ou expirado
  *       500:
  *         description: Erro interno do servidor
  */
 router.delete(
   "/medicos/:id",
+  validateAuth,
   validateParams(idParamSchema),
-  medicoController.deleteMedico
+  medicoController.deleteMedico,
 );
 
 export default router;

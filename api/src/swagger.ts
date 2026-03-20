@@ -10,7 +10,7 @@ const getServerUrl = () => {
   if (process.env.NODE_ENV === "production") {
     return process.env.SERVER_URL;
   }
-  return `http://localhost:${process.env.PORT}`;
+  return `http://localhost:${PORT}`;
 };
 
 const options: Options = {
