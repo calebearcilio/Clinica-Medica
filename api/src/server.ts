@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import { setupSwagger } from "./swagger";
 import routes from "./routes";
+import rateLimit from "express-rate-limit";
 
 dotenv.config({ quiet: true });
 
@@ -19,6 +20,16 @@ app.use(
   }),
 );
 
+// Limitação de taxa de requisição
+const limit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: "Muitas requisições, tente novamente mais tarde." },
+});
+
+app.use(limit);
 setupSwagger(app);
 app.use("", routes);
 
