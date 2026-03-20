@@ -1,13 +1,20 @@
 import { prisma } from "../db/prisma";
 import { Secretario } from "@prisma/client";
 import bcrypt from "bcrypt";
-import { CreateSecretarioData, UpdateSecretarioData } from "../schemas/secretarioSchemas";
+import {
+  CreateSecretarioData,
+  UpdateSecretarioData,
+} from "../schemas/secretarioSchemas";
+
+const BCRYPTSALT = 10;
+
+type SecretarioSemSenha = Omit<Secretario, "senha">;
 
 const secretarioService = {
   /**
-   * @returns Todas as instâncias de secretário do banco
+   * @returns Todas as instâncias de secretário do banco de dados.
    */
-  async getAll(): Promise<Omit<Secretario, "senha">[]> {
+  async getAll(): Promise<SecretarioSemSenha[]> {
     return await prisma.secretario.findMany({
       omit: { senha: true },
     });
@@ -15,9 +22,9 @@ const secretarioService = {
 
   /**
    * @param id ID do secretário
-   * @returns A instância do secretário buscado
+   * @returns A instância do secretário correspondente ou `null` se não existir
    */
-  async getById(id: number): Promise<Omit<Secretario, "senha"> | null> {
+  async getById(id: number): Promise<SecretarioSemSenha | null> {
     return await prisma.secretario.findUnique({
       where: { id },
       omit: { senha: true },
@@ -25,47 +32,65 @@ const secretarioService = {
   },
 
   /**
-   * @param data Dados completos do secretário que será adicionado no banco
-   * @returns Todos os dados, exeto a senha, do secretário criado
+   * Cria um novo secretário no banco.
+   * @param data Dados do secretário a ser adicionado no banco de dados
+   * @returns A instância do secretário adicionado, omitindo `senha`
    */
-  async create(data: CreateSecretarioData): Promise<Omit<Secretario, "senha">> {
-    const hashSenha = await bcrypt.hash(data.senha, 10);
+  async create(data: CreateSecretarioData): Promise<SecretarioSemSenha> {
+    // criptografando senha
+    const createData = { ...data };
+    createData.senha = await bcrypt.hash(createData.senha, BCRYPTSALT);
+
     const secretario = await prisma.secretario.create({
-      data: { ...data, senha: hashSenha },
+      data: createData,
     });
+
     const { senha, ...secretarioSemSenha } = secretario;
     return secretarioSemSenha;
   },
 
   /**
-   * @param id ID do secretário que terá seus dados atualizados
-   * @param data Dados do secretário que serão atualizados (todos opcionais)
-   * @returns Todos os dados atualizados, exeto a senha, do secretário
+   * Atualiza os dados de um secretário.
+   * @param id ID do secretário a ser atualizado
+   * @param data Dados parciais para atualização
+   * @returns A instância do secretário atualizada, omitindo `senha`
    */
   async update(
     id: number,
-    data: UpdateSecretarioData
-  ): Promise<Omit<Secretario, "senha">> {
+    data: UpdateSecretarioData,
+  ): Promise<SecretarioSemSenha> {
+    // criptografando senha
+    const updateData = { ...data };
+    if (updateData.senha) {
+      updateData.senha = await bcrypt.hash(updateData.senha, BCRYPTSALT);
+    }
+
     return await prisma.secretario.update({
       where: { id },
-      data,
+      data: updateData,
       omit: { senha: true },
     });
   },
 
   /**
-   * @param id ID do secretário que será removido do banco
-   * @returns Todos os dados do secretário removido
+   * Remove um secretário do banco pelo ID.
+   * @param id ID do secretário a ser removido
+   * @returns A instância do secretário removida
    */
-  async remove(id: number): Promise<Omit<Secretario, "senha">> {
+  async remove(id: number): Promise<SecretarioSemSenha> {
     return await prisma.secretario.delete({
       where: { id },
       omit: { senha: true },
     });
   },
 
+  /**
+   * 
+   * @param email Email do secretário
+   * @returns A instância do secretário correspondente
+   */
   async getByEmail(
-    email: string
+    email: string,
   ): Promise<Omit<Secretario, "createdAt" | "updatedAt"> | null> {
     const secretario = await prisma.secretario.findUnique({
       where: {
