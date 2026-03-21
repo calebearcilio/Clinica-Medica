@@ -14,9 +14,9 @@ Projeto de um sistema de gerenciamente de uma clínica médica, usando as tecnol
 
 ## Dependências
 
-- [Node.js](https://nodejs.org/en/download)
+- [Node.js](https://nodejs.org/pt-br/download)
 - [PostgreSQL](https://www.postgresql.org/download/)
-- variáveis de ambiente definidas no arquivo .env, siga como exemplo o arquivo [.env.exemple](.env.exemple)
+- variáveis de ambiente definidas no arquivo .env, siga como exemplo os arquivos .env.exemple
 
 ## Instalação e setup (para desenvolvimento)
 
