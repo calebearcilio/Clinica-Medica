@@ -2,8 +2,13 @@ import { Request, Response } from "express";
 import pacienteService from "../services/pacienteService";
 
 const pacientController = {
-  // Buscar todos os pacientes
-  async getAllPacientes(req: Request, res: Response) {
+  /**
+   * Retorna todos os pacientes do banco
+   * @param _req Request do Express
+   * @param res Response do Express
+   * @returns Lista de pacientes ou erro 500
+   */
+  async getAllPacientes(_req: Request, res: Response) {
     try {
       const pacientes = await pacienteService.getAll();
       return res.status(200).json(pacientes);
@@ -14,7 +19,12 @@ const pacientController = {
     }
   },
 
-  // Busca um paciente pelo ID
+  /**
+   * Busca um paciente pelo ID
+   * @param req Request do Express (req.params.id)
+   * @param res Response do Express
+   * @returns Dados do paciente (ou 404 se não encontrado) ou erro 500
+   */
   async getPacienteById(req: Request, res: Response) {
     try {
       const paciente = await pacienteService.getById(Number(req.params.id));
@@ -33,7 +43,12 @@ const pacientController = {
     }
   },
 
-  // Criar um novo paciente
+  /**
+   * Cria um novo paciente
+   * @param req Request do Express (req.body com dados do paciente)
+   * @param res Response do Express
+   * @returns Paciente criado (sem campos sensíveis), 409 se conflito ou 500
+   */
   async createPaciente(req: Request, res: Response) {
     try {
       const paciente = await pacienteService.create(req.body);
@@ -51,7 +66,12 @@ const pacientController = {
     }
   },
 
-  // Atualizar informações do paciente
+  /**
+   * Atualiza um paciente existente
+   * @param req Request do Express (req.params.id e req.body com dados a atualizar)
+   * @param res Response do Express
+   * @returns Paciente atualizado, 404 se não encontrado, 409 se conflito ou 500
+   */
   async updatePaciente(req: Request, res: Response) {
     try {
       const paciente = await pacienteService.update(
@@ -78,7 +98,12 @@ const pacientController = {
     }
   },
 
-  // Deletar um paciente
+  /**
+   * Remove um paciente do banco
+   * @param req Request do Express (req.params.id)
+   * @param res Response do Express
+   * @returns Status 204 se removido, 404 se não encontrado ou 500
+   */
   async deletePaciente(req: Request, res: Response) {
     try {
       const paciente = await pacienteService.remove(Number(req.params.id));

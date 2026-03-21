@@ -6,11 +6,11 @@ import jwt from "jsonwebtoken";
 const secretarioController = {
   /**
    * Retorna todas as instâncias de secretário do banco
-   * @param req Request do Express
+   * @param _req Request do Express
    * @param res Response do Express
    * @returns Lista de secretários (sem senha) ou erro 500
    */
-  async getAllSecretarios(req: Request, res: Response) {
+  async getAllSecretarios(_req: Request, res: Response) {
     try {
       const secretarios = await secretarioService.getAll();
       return res.status(200).json(secretarios);

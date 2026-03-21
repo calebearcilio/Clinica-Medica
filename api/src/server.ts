@@ -8,7 +8,8 @@ import rateLimit from "express-rate-limit";
 dotenv.config({ quiet: true });
 
 const PORT = process.env.PORT || 3000;
-const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:5173";
+const CORS_ORIGIN = process.env.CORS_ORIGIN || "*";
+const NODE_ENV = process.env.NODE_ENV || "development";
 
 const app: Express = express();
 app.use(express.json());
@@ -44,5 +45,5 @@ app.listen(PORT, () => {
   console.log(`Servidor rodando em: http://localhost:${PORT}`);
   console.log(`Documentação swagger: http://localhost:${PORT}/api-docs`);
   console.log(`Cors permitido para: ${CORS_ORIGIN}`);
-  console.log(`Ambiente: ${process.env.NODE_ENV || "development"}`);
+  console.log(`Ambiente: ${NODE_ENV}`);
 });

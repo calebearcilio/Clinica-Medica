@@ -2,8 +2,13 @@ import { Request, Response } from "express";
 import medicoService from "../services/medicoService";
 
 const medicoController = {
-  // Buscar todos os médicos
-  async getAllMedicos(req: Request, res: Response) {
+  /**
+   * Retorna todos os médicos do banco
+   * @param _req Request do Express
+   * @param res Response do Express
+   * @returns Lista de médicos ou erro 500
+   */
+  async getAllMedicos(_req: Request, res: Response) {
     try {
       const medicos = await medicoService.getAll();
       return res.status(200).json(medicos);
@@ -14,7 +19,12 @@ const medicoController = {
     }
   },
 
-  // Buscar um médico pelo CRM
+  /**
+   * Busca um médico pelo ID
+   * @param req Request do Express (req.params.id)
+   * @param res Response do Express
+   * @returns Dados do médico (ou 404 se não encontrado) ou erro 500
+   */
   async getMedicoById(req: Request, res: Response) {
     try {
       const medico = await medicoService.getById(Number(req.params.id));
@@ -33,7 +43,12 @@ const medicoController = {
     }
   },
 
-  // Criar um novo médico
+  /**
+   * Cria um novo médico
+   * @param req Request do Express (req.body com dados do médico)
+   * @param res Response do Express
+   * @returns Médico criado (sem campos sensíveis), 409 se conflito ou 500
+   */
   async createMedico(req: Request, res: Response) {
     try {
       const medico = await medicoService.create(req.body);
@@ -51,12 +66,17 @@ const medicoController = {
     }
   },
 
-  // Atualizar informações do médico
+  /**
+   * Atualiza um médico existente
+   * @param req Request do Express (req.params.id e req.body com dados a atualizar)
+   * @param res Response do Express
+   * @returns Médico atualizado, 404 se não encontrado, 409 se conflito ou 500
+   */
   async updateMedico(req: Request, res: Response) {
     try {
       const medico = await medicoService.update(
         Number(req.params.id),
-        req.body
+        req.body,
       );
       return res.status(200).json(medico);
     } catch (error: any) {
@@ -78,7 +98,12 @@ const medicoController = {
     }
   },
 
-  // Deletar um médico
+  /**
+   * Remove um médico do banco
+   * @param req Request do Express (req.params.id)
+   * @param res Response do Express
+   * @returns Status 204 se removido, 404 se não encontrado ou 500
+   */
   async deleteMedico(req: Request, res: Response) {
     try {
       await medicoService.remove(Number(req.params.id));
