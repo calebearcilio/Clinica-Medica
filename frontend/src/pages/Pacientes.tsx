@@ -17,9 +17,10 @@ import type { CreatePacienteData, Paciente } from "../types/paciente";
 import pacienteService from "../services/pacienteService";
 import PacienteFormModal from "../components/formsModal/PacienteFormModal";
 import DefaultTable, { type Column } from "../components/DefaultTable";
-import { sortPacientesByCreateData } from "../utils/dashboardUtils";
+import { sortPacientesByCreateData } from "../utils/sortsUtils";
 import StaticMessage from "../components/messages/StaticMessage";
 import { usePopup } from "../components/messages/PopupProvider";
+import { maskCPF, maskTelefone } from "../utils/inputMaskUtils";
 
 const Pacientes = () => {
   // informações dos pacientes
@@ -30,27 +31,31 @@ const Pacientes = () => {
   );
   // paciente selecionado para editar
   const [pacienteEdit, setPacienteEdit] = useState<Paciente | null>(null);
-  // controle de formulário
+  // controle do formulário modal
   const [openForm, setOpenForm] = useState<boolean>(false);
   // controle de carregamento
   const [loading, setLoading] = useState<boolean>(true);
-  // pacientes ordenados por data de criação
-  const recentPatientes = sortPacientesByCreateData(pacientes);
   // mensagem de falha no carregamento dos dados
   const [msgError, setMsgError] = useState<string | null>(null);
   // contexto global da mensagem popup
   const { showPopup } = usePopup();
+  // pacientes ordenados por data de criação
+  const recentPatientes = sortPacientesByCreateData(pacientes);
 
   // formatação da tabela
   const columnsTable: Column<Paciente>[] = [
     { id: "nome", label: "Nome" },
-    { id: "cpf", label: "CPF" },
-    { id: "telefone", label: "Telefone" },
+    { id: "cpf", label: "CPF", format: (value) => maskCPF(value) },
+    {
+      id: "telefone",
+      label: "Telefone",
+      format: (value) => maskTelefone(value),
+    },
     { id: "email", label: "Email" },
     {
       id: "id",
       label: "Ações",
-      align: "right",
+      align: "center",
       format: (_, row) => (
         <Box>
           <IconButton
@@ -86,7 +91,7 @@ const Pacientes = () => {
     }
   };
 
-  // função deletar médico
+  // função deletar paciente
   const handleDelete = async () => {
     if (!pacienteToDelete) return;
 
@@ -94,14 +99,14 @@ const Pacientes = () => {
       await pacienteService.delete(pacienteToDelete.id);
       setPacienteToDelete(null);
       showPopup("Paciente removido do sistema.", "success");
-    } catch (error) {
+    } catch {
       showPopup("Falha ao remover paciente.", "error");
     } finally {
       loadPacientes();
     }
   };
 
-  // função adicionar/atualizar médico
+  // função adicionar/atualizar paciente
   const handleSubmit = async (dataForm: CreatePacienteData) => {
     try {
       if (pacienteEdit) {
@@ -113,7 +118,7 @@ const Pacientes = () => {
       }
       loadPacientes();
       setOpenForm(false);
-    } catch (error) {
+    } catch {
       showPopup("Falha no envio dos dados.", "error");
     }
   };

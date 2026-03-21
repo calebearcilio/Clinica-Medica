@@ -11,8 +11,7 @@ export const createMedicoSchema = z.object({
   crm: z
     .string()
     .min(4, "CRM deve ter pelo menos 4 caracteres")
-    .max(20, "CRM deve ter no máximo 20 caracteres")
-    .regex(/^\d+$/, "CRM deve conter apenas números"),
+    .max(20, "CRM deve ter no máximo 20 caracteres"),
   especialidade: z
     .string()
     .min(2, "Especialidade deve ter pelo menos 2 caracteres")

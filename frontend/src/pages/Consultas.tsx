@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   Button,
   Box,
@@ -13,25 +12,41 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useEffect, useState } from "react";
 import type { Consulta, CreateConsultaData } from "../types/consulta";
 import consultaService from "../services/consultaService";
-import DefaultTable, { type Column } from "../components/DefaultTable";
 import ConsultaFormModal from "../components/formsModal/ConsultaFormModal";
+import DefaultTable, { type Column } from "../components/DefaultTable";
+import { sortConsultasByData } from "../utils/sortsUtils";
+import StaticMessage from "../components/messages/StaticMessage";
+import { usePopup } from "../components/messages/PopupProvider";
 
 export default function ConsultasPage() {
+  // informações das concultas
   const [consultas, setConsultas] = useState<Consulta[]>([]);
-  const [consultaToEdit, setConsultaToEdit] = useState<Consulta | null>(null);
+  // consulta selecionada para deletar
   const [consultaToDelete, setConsultaToDelete] = useState<Consulta | null>(
     null,
   );
+  // consulta selecionada para editar
+  const [consultaToEdit, setConsultaToEdit] = useState<Consulta | null>(null);
+  // controle do formulário modal
+  const [openForm, setOpenForm] = useState<boolean>(false);
+  // controle de carregamento
   const [loading, setLoading] = useState<boolean>(true);
-  const [openModal, setOpenModal] = useState<boolean>(false);
+  // mensagem de falha no carregamento dos dados
+  const [msgError, setMsgError] = useState<string | null>(null);
+  // contexto global da mensagem popup
+  const { showPopup } = usePopup();
+  // consultas ordenados por data, mais atual primeiro
+  const recentConsultas = sortConsultasByData(consultas);
 
+  // formatação das tabelas
   const columnsTable: Column<Consulta>[] = [
     {
       id: "dataHora",
       label: "Data",
-      format: (_, row) => <Typography>{row.dataHora.slice(0, 10)}</Typography>,
+      format: (value) => <Typography>{value.slice(0, 10)}</Typography>,
     },
     { id: "descricao", label: "Descrição" },
     { id: "medico", label: "Médico", format: (_, row) => row.medico.nome },
@@ -44,14 +59,14 @@ export default function ConsultasPage() {
     {
       id: "id",
       label: "Ações",
-      align: "right",
+      align: "center",
       format: (_, row) => (
         <Box>
           <IconButton
             color="primary"
             onClick={() => {
               setConsultaToEdit(row);
-              setOpenModal(true);
+              setOpenForm(true);
             }}
           >
             <EditIcon />
@@ -64,49 +79,73 @@ export default function ConsultasPage() {
     },
   ];
 
-  async function loadConsultas() {
+  // carregamento dos dados
+  const loadConsultas = async () => {
     setLoading(true);
+    setMsgError(null);
+
     try {
       const consultasDB = await consultaService.get();
       setConsultas(consultasDB);
-    } catch (error: any) {
-      // tratamento de erros
+      setMsgError(null);
+    } catch {
+      setMsgError("Falha ao carregar dados das consultas.");
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  async function handleDelete() {
+  // função deletar consulta
+  const handleDelete = async () => {
     if (!consultaToDelete) return;
 
     try {
       await consultaService.delete(consultaToDelete.id);
       setConsultaToDelete(null);
-    } catch (error: any) {
-      // tratamento de erros
+      showPopup("Consulta removido do sistema.", "success");
+    } catch {
+      showPopup("Falha ao remover consulta.", "error");
     } finally {
       loadConsultas();
     }
-  }
+  };
 
-  async function handleSubmit(dataForm: CreateConsultaData) {
+  // função adicionar/atualizar consulta
+  const handleSubmit = async (dataForm: CreateConsultaData) => {
     try {
       if (consultaToEdit) {
         await consultaService.update(consultaToEdit.id, dataForm);
+        showPopup("Informações da consulta atualizadas.", "success");
       } else {
         await consultaService.create(dataForm);
+        showPopup("Consulta cadastrado com sucesso.", "success");
       }
-    } catch (error: any) {
-      // tratamento de erros
+      loadConsultas();
+      setOpenForm(false);
+    } catch {
+      showPopup("Falha no envio dos dados.", "error");
     } finally {
       loadConsultas();
     }
-  }
+  };
 
   useEffect(() => {
     loadConsultas();
   }, []);
 
+  // Erro ao carregar dados do servidor
+  if (!!msgError) {
+    return (
+      <StaticMessage
+        alertMessage={msgError}
+        message="Não conseguimos carregar os dados. Isso pode ser temporário."
+        functionReload={loadConsultas}
+        severity="error"
+      />
+    );
+  }
+
+  // Conteúdo principal
   return (
     <Box p={3}>
       <Stack
@@ -121,18 +160,19 @@ export default function ConsultasPage() {
           color="primary"
           onClick={() => {
             setConsultaToEdit(null);
-            setOpenModal(true);
+            setOpenForm(true);
           }}
         >
           Nova consulta
         </Button>
       </Stack>
 
+      {/* Tabela */}
       <Paper elevation={2}>
         <DefaultTable
-          getRowId={(m) => m.id}
-          rows={consultas}
           columns={columnsTable}
+          rows={recentConsultas}
+          getRowId={(m) => m.id}
           isLoading={loading}
         />
       </Paper>
@@ -145,7 +185,8 @@ export default function ConsultasPage() {
         <DialogTitle>Excluir paciente</DialogTitle>
         <DialogContent>
           Tem certeza que deseja excluir a consulta de{" "}
-          <strong>{consultaToDelete?.paciente.nome}</strong> ?
+          <strong>{consultaToDelete?.paciente.nome}</strong> com{" "}
+          <strong>{consultaToDelete?.medico.nome}</strong> ?
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setConsultaToDelete(null)}>Cancelar</Button>
@@ -155,9 +196,10 @@ export default function ConsultasPage() {
         </DialogActions>
       </Dialog>
 
+      {/* Formulário para adicionar/atualizar dados de um médico */}
       <ConsultaFormModal
-        open={openModal}
-        onClose={() => setOpenModal(false)}
+        open={openForm}
+        onClose={() => setOpenForm(false)}
         onSubmit={handleSubmit}
         consulta={consultaToEdit}
       />

@@ -10,8 +10,8 @@ export function consultasToday(consultas: Consulta[]): Consulta[] | null {
 export function sortConsultasByData(consultas: Consulta[]): Consulta[] {
   return [...consultas].sort(
     (consultaA, consultaB) =>
-      new Date(consultaA.dataHora).getTime() -
-      new Date(consultaB.dataHora).getTime(),
+      new Date(consultaB.dataHora).getTime() -
+      new Date(consultaA.dataHora).getTime(),
   );
 }
 

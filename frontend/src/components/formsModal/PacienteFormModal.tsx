@@ -26,7 +26,6 @@ type Props = {
   paciente?: Paciente | null;
 };
 
-// objeto com informações vazias
 const empityForm: CreatePacienteData = {
   nome: "",
   cpf: "",
@@ -62,6 +61,7 @@ const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
     }
   }, [paciente, open]);
 
+  // função de captura de entrada
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setErrors((errors) => ({ ...errors, [name]: "" }));
@@ -75,13 +75,12 @@ const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
     } else if (name === "telefone") {
       const valueMasked = maskTelefone(value);
       setForm({ ...form, [name]: valueMasked });
-
-      // sem formatação para qualquer outro input
     } else {
       setForm({ ...form, [name]: value });
     }
   };
 
+  // função de validação e envio de dados para o servidor
   const handleSubmit = async () => {
     // validando os campos com zod
     const validate = validateSchema(
@@ -99,6 +98,7 @@ const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
     setLoading(false);
   };
 
+  // Conteúdo principal
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>

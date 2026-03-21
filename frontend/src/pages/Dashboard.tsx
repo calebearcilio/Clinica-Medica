@@ -27,7 +27,7 @@ import consultaService from "../services/consultaService";
 import {
   sortConsultasByData,
   sortPacientesByCreateData,
-} from "../utils/dashboardUtils";
+} from "../utils/sortsUtils";
 import DashboardSkeleton from "../components/skeletons/DeshboardSkeleton";
 import type { Secretario } from "../types/secretario";
 import secretarioService from "../services/secretarioService";
@@ -107,7 +107,7 @@ const Dashboard: React.FC = () => {
       setConsultas(consultasDB);
       setSecretarios(secretariosDB);
       setMsgError(null);
-    } catch (error: any) {
+    } catch {
       setMsgError("Falha ao carregar dados do sistema");
     } finally {
       setLoading(false);

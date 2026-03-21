@@ -14,9 +14,7 @@ const pacienteService = {
   },
 
   async getById(id: number): Promise<Paciente> {
-    const request = await api.get<Paciente>(
-      `${API_ENDPOINTS.PACIENTES}/${id}`,
-    );
+    const request = await api.get<Paciente>(`${API_ENDPOINTS.PACIENTES}/${id}`);
     return request.data;
   },
 

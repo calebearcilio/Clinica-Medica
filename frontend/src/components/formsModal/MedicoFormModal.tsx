@@ -10,26 +10,23 @@ import {
   TextField,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import type {
-  CreateMedicoData,
-  Medico,
-  UpdateMedicoData,
-} from "../../types/medico";
+import type { CreateMedicoData, Medico } from "../../types/medico";
 import { validateSchema } from "../../schemas/validations";
 import {
   createMedicoSchema,
   updateMedicoSchema,
 } from "../../schemas/medicoSchema";
 import { maskTelefone } from "../../utils/inputMaskUtils";
+import { usePopup } from "../messages/PopupProvider";
 
 type Props = {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: CreateMedicoData | UpdateMedicoData) => Promise<void>;
+  onSubmit: (data: CreateMedicoData) => Promise<void>;
   medico?: Medico | null;
 };
 
-const empityForm: UpdateMedicoData = {
+const empityForm: CreateMedicoData = {
   nome: "",
   especialidade: "",
   crm: "",
@@ -39,13 +36,13 @@ const empityForm: UpdateMedicoData = {
 
 const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
   // informações capturadas no formulário
-  const [form, setForm] = useState<CreateMedicoData | UpdateMedicoData>(
-    empityForm,
-  );
+  const [form, setForm] = useState<CreateMedicoData>(empityForm);
   // controle de carregamento
   const [loading, setLoading] = useState<boolean>(false);
   // mostrar possíveis erros nos campos
   const [errors, setErrors] = useState<Record<string, string>>({});
+  // contexto global da mensagem popup
+  const { showPopup } = usePopup();
 
   useEffect(() => {
     setErrors({});
@@ -64,6 +61,7 @@ const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
     }
   }, [medico, open]);
 
+  // função de captura de entrada
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setErrors((errors) => ({ ...errors, [name]: "" }));
@@ -77,6 +75,7 @@ const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
     }
   };
 
+  // função de validação e envio de dados para o servidor
   const handleSubmit = async () => {
     // validando os campos com zod
     const validate = validateSchema(
@@ -86,20 +85,16 @@ const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
 
     if (!validate.isValid) {
       setErrors(validate.errors);
+      showPopup("Credênciais inválidas.", "error");
       return;
     }
 
     setLoading(true);
-    try {
-      await onSubmit(form);
-    } catch (error: any) {
-      // tratamento de erros
-    } finally {
-      setLoading(false);
-      onClose();
-    }
+    await onSubmit(form);
+    setLoading(false);
   };
 
+  // Conteúdo principal
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>
