@@ -8,28 +8,28 @@ import { api } from "../config/api";
 
 const consultaService = {
   async get(): Promise<Consulta[]> {
-    const response = await api.get<Consulta[]>(API_ENDPOINTS.CONSULTAS);
-    return response.data;
+    const request = await api.get<Consulta[]>(API_ENDPOINTS.CONSULTAS);
+    return request.data;
   },
 
   async getById(id: number): Promise<Consulta> {
-    const response = await api.get<Consulta>(
+    const request = await api.get<Consulta>(
       `${API_ENDPOINTS.CONSULTAS}/${id}`
     );
-    return response.data;
+    return request.data;
   },
 
   async create(data: CreateConsultaData): Promise<Consulta> {
-    const response = await api.post<Consulta>(API_ENDPOINTS.CONSULTAS, data);
-    return response.data;
+    const request = await api.post<Consulta>(API_ENDPOINTS.CONSULTAS, data);
+    return request.data;
   },
 
   async update(id: number, data: UpdateConsultaData): Promise<Consulta> {
-    const response = await api.put<Consulta>(
+    const request = await api.put<Consulta>(
       `${API_ENDPOINTS.CONSULTAS}/${id}`,
       data
     );
-    return response.data;
+    return request.data;
   },
 
   async delete(id: number): Promise<void> {
