@@ -77,7 +77,7 @@ const Login = () => {
         "success",
       );
 
-      // empera de 1 segundo para navegar a página
+      // espera de 1 segundo para redirecionar
       setTimeout(() => {
         navegate("/dashboard", { replace: true });
       }, 1000);
@@ -183,6 +183,7 @@ const Login = () => {
                 }}
               />
             }
+            disabled={loading}
             label="Manter logado?"
           />
           <Button

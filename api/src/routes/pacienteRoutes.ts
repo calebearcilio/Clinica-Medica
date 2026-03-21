@@ -25,8 +25,6 @@ const router: Router = Router();
  *     tags: [Pacientes]
  *     security:
  *       - bearerAuth: []
- *     security:
- *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Lista de pacientes

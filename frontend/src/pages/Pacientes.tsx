@@ -13,7 +13,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useEffect, useState } from "react";
-import type { Paciente } from "../types/paciente";
+import type { CreatePacienteData, Paciente } from "../types/paciente";
 import pacienteService from "../services/pacienteService";
 import PacienteFormModal from "../components/formsModal/PacienteFormModal";
 import DefaultTable, { type Column } from "../components/DefaultTable";
@@ -102,7 +102,7 @@ const Pacientes = () => {
   };
 
   // função adicionar/atualizar médico
-  const handleSubmit = async (dataForm: any) => {
+  const handleSubmit = async (dataForm: CreatePacienteData) => {
     try {
       if (pacienteEdit) {
         await pacienteService.update(pacienteEdit.id, dataForm);
