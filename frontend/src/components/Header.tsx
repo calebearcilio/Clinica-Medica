@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { Menu as MenuIcon } from "@mui/icons-material";
 import logo from "../assets/CuraeClinic_logo2.svg";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { normalizeUrl } from "../utils/headerUtils";
 import secretarioService from "../services/secretarioService";
@@ -23,15 +23,15 @@ const settings = ["Perfil", "Configurações", "Dashboard"];
 
 const Header = () => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-    null
+    null,
   );
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
-    null
+    null,
   );
-  const [userName, setUserName] = useState<string | undefined>();
-  useEffect(() => {
-    setUserName(sessionStorage.getItem("userName")|| localStorage.getItem("userName") || undefined);
-  })
+  const userName =
+    sessionStorage.getItem("userName") ||
+    localStorage.getItem("userName") ||
+    undefined;
 
   const navigate = useNavigate();
 
@@ -52,7 +52,6 @@ const Header = () => {
     <AppBar position="sticky">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          {/* Logo */}
           <Link
             component={RouterLink}
             to="/"
@@ -113,7 +112,6 @@ const Header = () => {
               ))}
             </Menu>
           </Box>
-          {/* Logo */}
           <Link
             component={RouterLink}
             to="/"
