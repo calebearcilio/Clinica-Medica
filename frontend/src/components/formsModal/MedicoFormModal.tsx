@@ -20,6 +20,7 @@ import {
   createMedicoSchema,
   updateMedicoSchema,
 } from "../../schemas/medicoSchema";
+import { maskTelefone } from "../../utils/inputMaskUtils";
 
 type Props = {
   open: boolean;
@@ -37,14 +38,19 @@ const empityForm: UpdateMedicoData = {
 };
 
 const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
+  // informações capturadas no formulário
   const [form, setForm] = useState<CreateMedicoData | UpdateMedicoData>(
     empityForm,
   );
+  // controle de carregamento
   const [loading, setLoading] = useState<boolean>(false);
+  // mostrar possíveis erros nos campos
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     setErrors({});
+
+    // trazendo dados do paciente, caso seja selecionado um
     if (medico) {
       setForm({
         nome: medico.nome,
@@ -61,13 +67,10 @@ const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setErrors((errors) => ({ ...errors, [name]: "" }));
+
+    // formatando telefone a cada mudança
     if (name === "telefone") {
-      event.currentTarget.maxLength = 19;
-      const valueMasked = value
-        .replace(/\D/g, "")
-        .replace(/^(\d{2})(\d)/g, "+$1 ($2")
-        .replace(/(\d{2})(\d)/, "$1) $2")
-        .replace(/(\d{5})(\d{4})/, "$1-$2");
+      const valueMasked = maskTelefone(value);
       setForm({ ...form, [name]: valueMasked });
     } else {
       setForm({ ...form, [name]: value });
@@ -75,6 +78,7 @@ const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
   };
 
   const handleSubmit = async () => {
+    // validando os campos com zod
     const validate = validateSchema(
       form,
       medico ? updateMedicoSchema : createMedicoSchema,
@@ -113,6 +117,7 @@ const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
             helperText={errors.nome}
             disabled={loading}
             fullWidth
+            required
           />
           <TextField
             label="Especialidade"
@@ -123,6 +128,7 @@ const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
             helperText={errors.especialidade}
             disabled={loading}
             fullWidth
+            required
           />
           <TextField
             label="CRM"
@@ -134,6 +140,7 @@ const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
             helperText={errors.crm}
             disabled={loading}
             fullWidth
+            required
           />
           <TextField
             label="Telefone"
@@ -145,6 +152,7 @@ const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
             helperText={errors.telefone}
             disabled={loading}
             fullWidth
+            required
           />
           <TextField
             label="Email"
@@ -155,6 +163,7 @@ const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
             helperText={errors.email}
             disabled={loading}
             fullWidth
+            required
           />
         </Stack>
       </DialogContent>

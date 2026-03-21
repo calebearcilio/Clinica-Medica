@@ -17,6 +17,7 @@ import {
   updatePacienteSchema,
 } from "../../schemas/pacienteSchema";
 import { usePopup } from "../messages/PopupProvider";
+import { maskCPF, maskTelefone } from "../../utils/inputMaskUtils";
 
 type Props = {
   open: boolean;
@@ -46,6 +47,8 @@ const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
 
   useEffect(() => {
     setErrors({});
+
+    // trazendo dados do paciente, caso seja selecionado um
     if (paciente) {
       setForm({
         nome: paciente.nome,
@@ -62,23 +65,18 @@ const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setErrors((errors) => ({ ...errors, [name]: "" }));
+
+    // formatando CPF a cada mudança
     if (name === "cpf") {
-      event.currentTarget.maxLength = 14;
-      const valueMasked = value
-        .replace(/\D/g, "")
-        .replace(/(\d{3})(\d)/, "$1.$2")
-        .replace(/(\d{3})(\d)/, "$1.$2")
-        .replace(/(\d{3})(\d{1,2})/, "$1-$2")
-        .replace(/(-\d{2})\d+?$/, "$1");
+      const valueMasked = maskCPF(value);
       setForm({ ...form, [name]: valueMasked });
+
+      // formatando telefone a cada mudança
     } else if (name === "telefone") {
-      event.currentTarget.maxLength = 19;
-      const valueMasked = value
-        .replace(/\D/g, "")
-        .replace(/^(\d{2})(\d)/g, "+$1 ($2")
-        .replace(/(\d{2})(\d)/, "$1) $2")
-        .replace(/(\d{5})(\d)/, "$1-$2");
+      const valueMasked = maskTelefone(value);
       setForm({ ...form, [name]: valueMasked });
+
+      // sem formatação para qualquer outro input
     } else {
       setForm({ ...form, [name]: value });
     }
@@ -90,10 +88,9 @@ const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
       form,
       paciente ? updatePacienteSchema : createPacienteSchema,
     );
-
     if (!validate.isValid) {
       setErrors(validate.errors);
-      showPopup("Erro ao realizar login. Verifique suas credenciais.", "error");
+      showPopup("Credências inválidas.", "error");
       return;
     }
 
@@ -119,6 +116,7 @@ const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
             helperText={errors.nome}
             disabled={loading}
             fullWidth
+            required
           />
           <TextField
             label="CPF"
@@ -130,6 +128,7 @@ const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
             helperText={errors.cpf}
             disabled={loading}
             fullWidth
+            required
           />
           <TextField
             label="Telefone"
@@ -152,6 +151,7 @@ const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
             helperText={errors.email}
             disabled={loading}
             fullWidth
+            required
           />
           <TextField
             label="Data de nascimento"
@@ -164,6 +164,7 @@ const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
             helperText={errors.dataNascimento}
             disabled={loading}
             fullWidth
+            required
           />
         </Stack>
       </DialogContent>

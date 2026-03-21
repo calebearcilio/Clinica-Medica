@@ -1,0 +1,18 @@
+export const maskCPF = (value: string): string => {
+  return value
+    .replace(/\D/g, "")
+    .replace(/(\d{3})(\d)/, "$1.$2")
+    .replace(/(\d{3})(\d)/, "$1.$2")
+    .replace(/(\d{3})(\d{1,2})/, "$1-$2")
+    .replace(/(-\d{2})\d+?$/, "$1")
+    .slice(0, 15);
+};
+
+export const maskTelefone = (value: string): string => {
+  return value
+    .replace(/\D/g, "")
+    .replace(/^(\d{2})(\d)/g, "+$1 ($2")
+    .replace(/(\d{2})(\d)/, "$1) $2")
+    .replace(/(\d{5})(\d)/, "$1-$2")
+    .slice(0, 19);
+};
