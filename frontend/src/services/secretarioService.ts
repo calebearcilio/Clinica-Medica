@@ -1,10 +1,11 @@
 import axios, { AxiosError } from "axios";
 import { API_ENDPOINTS } from "../config/apiUrl";
 import type { LoginResponse, LoginSecretarioData, Secretario } from "../types/secretario";
+import { api } from "../config/api";
 
 const secretarioService = {
   async get(): Promise<Secretario[]> {
-    const response = await axios.get(API_ENDPOINTS.SECRETARIO);
+    const response = await api.get(API_ENDPOINTS.SECRETARIO);
     return response.data;
   },
 
