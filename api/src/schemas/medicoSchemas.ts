@@ -3,24 +3,31 @@ import z from "zod";
 export const createMedicoSchema = z.object({
   nome: z
     .string()
-    .min(2, "Nome deve ter pelo menos 2 caracteres.")
-    .max(100, "Nome deve ter no máximo 100 caracteres."),
+    .max(100, "Nome deve ter no máximo 100 caracteres.")
+    .min(3, "Mínimo de 3 caracteres.")
+    .nonempty("Nome ausente"),
   email: z
-    .email("Email deve ter um formato válido.")
-    .max(255, "Email deve ter no máximo 255 caracteres."),
+    .email("Email inválido.")
+    .max(255, "Email deve ter no máximo 255 caracteres.")
+    .nonempty("Email ausente."),
   crm: z
     .string()
     .min(4, "CRM deve ter pelo menos 4 caracteres")
     .max(20, "CRM deve ter no máximo 20 caracteres")
-    .regex(/^\d+$/, "CRM deve conter apenas números"),
+    .refine((value) => {
+      return (ufs.includes(value.slice(0, 2)));
+    }, "UF inválida")
+    .nonempty("CRM ausente"),
   especialidade: z
     .string()
     .min(2, "Especialidade deve ter pelo menos 2 caracteres")
-    .max(100, "Especialidade deve ter no máximo 100 caracteres"),
+    .max(100, "Especialidade deve ter no máximo 100 caracteres")
+    .nonempty("Especialidade ausente"),
   telefone: z
     .string()
-    .min(11, "Telefone deve ter pelo menos 11 caracteres.")
-    .max(19, "Telefone deve ter no máximo 19 caracteres.")
+    .refine((value) => {
+      return !(value && value.length < 13);
+    }, "Número de telefone inválido.")
     .optional(),
 });
 
@@ -28,3 +35,33 @@ export const updateMedicoSchema = createMedicoSchema.partial();
 
 export type CreateMedicoData = z.infer<typeof createMedicoSchema>;
 export type UpdateMedicoData = z.infer<typeof updateMedicoSchema>;
+
+const ufs = [
+  "AC",
+  "AL",
+  "AP",
+  "AM",
+  "BA",
+  "CE",
+  "DF",
+  "ES",
+  "GO",
+  "MA",
+  "MT",
+  "MS",
+  "MG",
+  "PA",
+  "PB",
+  "PR",
+  "PE",
+  "PI",
+  "RJ",
+  "RN",
+  "RS",
+  "RO",
+  "RR",
+  "SC",
+  "SP",
+  "SE",
+  "TO",
+];
