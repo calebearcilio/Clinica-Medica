@@ -210,9 +210,6 @@ const Login = () => {
               alignItems: "center",
             }}
           >
-            <Link href="#nova-senha" underline="hover">
-              Esqueci minha senha
-            </Link>
           </Box>
         </Box>
       </Paper>

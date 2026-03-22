@@ -53,7 +53,7 @@ const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
         nome: medico.nome,
         especialidade: medico.especialidade,
         crm: maskCrm(medico.crm),
-        telefone: medico.telefone,
+        telefone: maskTelefone(medico.telefone),
         email: medico.email,
       });
     } else {

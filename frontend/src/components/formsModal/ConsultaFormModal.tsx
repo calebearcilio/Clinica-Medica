@@ -22,8 +22,9 @@ import {
   createConsultaSchema,
   updateConsultaSchema,
 } from "../../schemas/consultaSchema";
-import { MobileDateTimePicker } from "@mui/x-date-pickers";
+import { DateTimePicker, MobileDateTimePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
+import { maskCPF } from "../../utils/inputMaskUtils";
 
 type Props = {
   open: boolean;
@@ -56,10 +57,14 @@ const ConsultaFormModal = ({ open, onClose, onSubmit, consulta }: Props) => {
   // opções de escolha de paciente e médico
   const [options, setOptions] = useState<Options>();
 
+  // carregando as opções
+  useEffect(() => {
+    loadOptions();
+  }, []);
+
   // trazendo dados das consultas, caso seja selecionado um
   useEffect(() => {
     setErrors({});
-    loadOptions();
 
     if (consulta) {
       setForm({
@@ -68,8 +73,12 @@ const ConsultaFormModal = ({ open, onClose, onSubmit, consulta }: Props) => {
         medicoId: consulta.medicoId,
         pacienteId: consulta.pacienteId,
       });
-    } else {
-      setForm(empityForm);
+    } else if (options && !consulta) {
+      setForm({
+        ...empityForm,
+        medicoId: options.medicos[options.medicos.length - 1].id || 0,
+        pacienteId: options.pacientes[options.pacientes.length - 1].id || 0,
+      });
     }
   }, [consulta, open, options]);
 
@@ -119,7 +128,7 @@ const ConsultaFormModal = ({ open, onClose, onSubmit, consulta }: Props) => {
 
       <DialogContent>
         <Stack spacing={3} m={1}>
-          <MobileDateTimePicker
+          <DateTimePicker
             label="Data e hora"
             name="dataHora"
             value={form.dataHora ? dayjs(form.dataHora) : null}
@@ -131,7 +140,8 @@ const ConsultaFormModal = ({ open, onClose, onSubmit, consulta }: Props) => {
 
               setForm((form) => ({
                 ...form,
-                dataHora: newValue ? newValue.toISOString() : "",
+                dataHora:
+                  newValue && newValue.isValid() ? newValue.toISOString() : "",
               }));
             }}
             slotProps={{
@@ -160,7 +170,7 @@ const ConsultaFormModal = ({ open, onClose, onSubmit, consulta }: Props) => {
             getOptionLabel={(option) =>
               `${option.nome} - ${option.especialidade}`
             }
-            value={options?.medicos.find((m) => m.id === form.medicoId) || null}
+            value={options?.medicos.find((m) => m.id === form.medicoId)}
             onChange={(_, newValue) => {
               setErrors((errors) => ({ ...errors, medicoId: "" }));
 
@@ -179,10 +189,8 @@ const ConsultaFormModal = ({ open, onClose, onSubmit, consulta }: Props) => {
           {/* Opções de pacientes */}
           <Autocomplete
             options={options?.pacientes || []}
-            getOptionLabel={(option) => `${option.nome} - ${option.cpf}`}
-            value={
-              options?.pacientes.find((p) => p.id === form.pacienteId) || null
-            }
+            getOptionLabel={(option) => `${option.nome} - ${maskCPF(option.cpf)}`}
+            value={options?.pacientes.find((p) => p.id === form.pacienteId)}
             onChange={(_, newValue) => {
               setErrors((errors) => ({ ...errors, pacienteId: "" }));
 
