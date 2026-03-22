@@ -21,6 +21,7 @@ import { sortPacientesByCreateData } from "../utils/sortsUtils";
 import StaticMessage from "../components/messages/StaticMessage";
 import { usePopup } from "../components/messages/PopupProvider";
 import { maskCPF, maskTelefone } from "../utils/inputMaskUtils";
+import dayjs from "dayjs";
 
 const Pacientes = () => {
   // informações dos pacientes
@@ -52,6 +53,9 @@ const Pacientes = () => {
       format: (value) => maskTelefone(value),
     },
     { id: "email", label: "Email" },
+    {id: "dataNascimento", label: "Data de nascimento", format: (value, _row) => (
+      <Typography>{dayjs(value).format("DD/MM/YYYY")}</Typography>
+    )},
     {
       id: "id",
       label: "Ações",

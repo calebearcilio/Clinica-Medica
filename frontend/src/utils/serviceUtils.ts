@@ -1,7 +1,11 @@
-export const putFormatCpf = (value: string): string => {
+export const postFormatCpf = (value: string): string => {
   return value.replace(/\D/g, "");
 };
 
-export const putFormatPhone = (value: string): string => {
+export const postFormatPhone = (value: string): string => {
   return value.replace(/\D/g, "");
 };
+
+export const postFormatCrm = (value: string): string=> {
+  return value.replace("-","");
+}

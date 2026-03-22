@@ -9,7 +9,7 @@ export type Consulta = {
   medicoId: number;
   paciente: Omit<Paciente, "id">;
   medico: Omit<Medico, "id">;
-}
+};
 
 export type CreateConsultaData = Omit<Consulta, "id" | "paciente" | "medico">;
 export type UpdateConsultaData = Partial<CreateConsultaData>;

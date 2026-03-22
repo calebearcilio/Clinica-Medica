@@ -5,6 +5,7 @@ import type {
 } from "../types/medico";
 import { API_ENDPOINTS } from "../config/apiUrl";
 import { api } from "../config/api";
+import { postFormatCrm, postFormatPhone } from "../utils/serviceUtils";
 
 const medicoService = {
   async get(): Promise<Medico[]> {
@@ -18,14 +19,24 @@ const medicoService = {
   },
 
   async create(data: CreateMedicoData): Promise<Medico> {
+    data = {
+      ...data,
+      telefone: data.telefone ? postFormatPhone(data.telefone) : undefined,
+      crm: postFormatCrm(data.crm),
+    };
     const request = await api.post<Medico>(API_ENDPOINTS.MEDICOS, data);
     return request.data;
   },
 
   async update(id: number, data: UpdateMedicoData): Promise<Medico> {
+    data = {
+      ...data,
+      telefone: data.telefone ? postFormatPhone(data.telefone) : undefined,
+      crm: data.crm ? postFormatCrm(data.crm) : undefined,
+    };
     const request = await api.put<Medico>(
       `${API_ENDPOINTS.MEDICOS}/${id}`,
-      data
+      data,
     );
     return request.data;
   },

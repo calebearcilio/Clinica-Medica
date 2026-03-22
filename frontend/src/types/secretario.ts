@@ -4,13 +4,13 @@ export type Secretario = {
   email: string;
   senha: string;
   telefone?: string;
-}
+};
 
 export type LoginSecretarioData = {
   email: string;
   senha: string;
   keepLogin: boolean;
-}
+};
 
 export type LoginResponse = {
   nome: string;

@@ -19,7 +19,7 @@ import MedicoFormModal from "../components/formsModal/MedicoFormModal";
 import DefaultTable, { type Column } from "../components/DefaultTable";
 import { sortMedicosByCreateData } from "../utils/sortsUtils";
 import { usePopup } from "../components/messages/PopupProvider";
-import { maskTelefone } from "../utils/inputMaskUtils";
+import { maskCrm, maskTelefone } from "../utils/inputMaskUtils";
 import StaticMessage from "../components/messages/StaticMessage";
 
 const Medicos = () => {
@@ -44,7 +44,9 @@ const Medicos = () => {
   const columnsTable: Column<Medico>[] = [
     { id: "nome", label: "Nome" },
     { id: "especialidade", label: "Especialidade" },
-    { id: "crm", label: "CRM" },
+    { id: "crm", label: "CRM", format: (value) => (
+      maskCrm(value)
+    ) },
     { id: "email", label: "Email" },
     {
       id: "telefone",

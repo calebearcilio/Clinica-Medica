@@ -16,7 +16,7 @@ import {
   createMedicoSchema,
   updateMedicoSchema,
 } from "../../schemas/medicoSchema";
-import { maskTelefone } from "../../utils/inputMaskUtils";
+import { maskCrm, maskTelefone } from "../../utils/inputMaskUtils";
 import { usePopup } from "../messages/PopupProvider";
 
 type Props = {
@@ -52,7 +52,7 @@ const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
       setForm({
         nome: medico.nome,
         especialidade: medico.especialidade,
-        crm: medico.crm,
+        crm: maskCrm(medico.crm),
         telefone: medico.telefone,
         email: medico.email,
       });
@@ -69,6 +69,9 @@ const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
     // formatando telefone a cada mudança
     if (name === "telefone") {
       const valueMasked = maskTelefone(value);
+      setForm({ ...form, [name]: valueMasked });
+    } else if (name === "crm") {
+      const valueMasked = maskCrm(value);
       setForm({ ...form, [name]: valueMasked });
     } else {
       setForm({ ...form, [name]: value });
@@ -128,23 +131,11 @@ const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
           <TextField
             label="CRM"
             name="crm"
-            placeholder="CRMx-000"
+            placeholder="UF-0000"
             value={form.crm}
             onChange={handleInputChange}
             error={!!errors.crm}
             helperText={errors.crm}
-            disabled={loading}
-            fullWidth
-            required
-          />
-          <TextField
-            label="Telefone"
-            name="telefone"
-            placeholder="+55 (00) 90000-0000"
-            value={form.telefone}
-            onChange={handleInputChange}
-            error={!!errors.telefone}
-            helperText={errors.telefone}
             disabled={loading}
             fullWidth
             required
@@ -159,6 +150,17 @@ const MedicoFormModal = ({ open, onClose, onSubmit, medico }: Props) => {
             disabled={loading}
             fullWidth
             required
+          />
+          <TextField
+            label="Telefone"
+            name="telefone"
+            placeholder="+55 (00) 90000-0000"
+            value={form.telefone}
+            onChange={handleInputChange}
+            error={!!errors.telefone}
+            helperText={errors.telefone}
+            disabled={loading}
+            fullWidth
           />
         </Stack>
       </DialogContent>

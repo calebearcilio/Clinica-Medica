@@ -1,4 +1,5 @@
 import {
+  Autocomplete,
   Box,
   Button,
   CircularProgress,
@@ -6,7 +7,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  MenuItem,
   Stack,
   TextField,
 } from "@mui/material";
@@ -22,6 +22,8 @@ import {
   createConsultaSchema,
   updateConsultaSchema,
 } from "../../schemas/consultaSchema";
+import { MobileDateTimePicker } from "@mui/x-date-pickers";
+import dayjs, { Dayjs } from "dayjs";
 
 type Props = {
   open: boolean;
@@ -54,11 +56,11 @@ const ConsultaFormModal = ({ open, onClose, onSubmit, consulta }: Props) => {
   // opções de escolha de paciente e médico
   const [options, setOptions] = useState<Options>();
 
+  // trazendo dados das consultas, caso seja selecionado um
   useEffect(() => {
     setErrors({});
-    loadData();
+    loadOptions();
 
-    // trazendo dados das consultas, caso seja selecionado um
     if (consulta) {
       setForm({
         dataHora: consulta.dataHora,
@@ -67,16 +69,12 @@ const ConsultaFormModal = ({ open, onClose, onSubmit, consulta }: Props) => {
         pacienteId: consulta.pacienteId,
       });
     } else {
-      setForm({
-        ...empityForm,
-        medicoId: options?.medicos[0].id || 0,
-        pacienteId: options?.pacientes[0].id || 0,
-      });
+      setForm(empityForm);
     }
-  }, [consulta, open]);
+  }, [consulta, open, options]);
 
   // carregando dados de pacientes e médicos para as opções
-  const loadData = async (): Promise<void> => {
+  const loadOptions = async (): Promise<void> => {
     const [pacienteDB, medicoDB] = await Promise.all([
       pacienteService.get(),
       medicoService.get(),
@@ -121,18 +119,29 @@ const ConsultaFormModal = ({ open, onClose, onSubmit, consulta }: Props) => {
 
       <DialogContent>
         <Stack spacing={3} m={1}>
-          <TextField
-            label="Data e Hora"
+          <MobileDateTimePicker
+            label="Data e hora"
             name="dataHora"
-            type="date"
-            value={form.dataHora.slice(0, 10)}
-            onChange={handleInputChange}
-            error={!!errors.dataHora}
-            helperText={errors.dataHora}
+            value={form.dataHora ? dayjs(form.dataHora) : null}
             disabled={loading}
-            fullWidth
-            required
-            slotProps={{ inputLabel: { shrink: true } }}
+            minDateTime={dayjs()}
+            minutesStep={15}
+            onChange={(newValue: Dayjs | null) => {
+              setErrors((errors) => ({ ...errors, dataHora: "" }));
+
+              setForm((form) => ({
+                ...form,
+                dataHora: newValue ? newValue.toISOString() : "",
+              }));
+            }}
+            slotProps={{
+              textField: {
+                fullWidth: true,
+                required: true,
+                error: !!errors.dataHora,
+                helperText: errors.dataHora,
+              },
+            }}
           />
           <TextField
             label="Descrição"
@@ -144,46 +153,51 @@ const ConsultaFormModal = ({ open, onClose, onSubmit, consulta }: Props) => {
             disabled={loading}
             fullWidth
           />
-          <TextField
-            select
-            label="Médico"
-            name="medicoId"
-            defaultValue={form.medicoId}
-            onChange={handleInputChange}
-            error={!!errors.medicoId}
-            helperText={errors.medicoId}
-            disabled={loading}
-            fullWidth
-            required
-          >
-            {/* Opções de médicos */}
-            {options?.medicos
-              ? options?.medicos.map((medico) => (
-                  <MenuItem key={`medico-${medico.id}`} value={medico.id}>
-                    {medico.nome} <br /> {medico.especialidade}
-                  </MenuItem>
-                ))
-              : "Nenhum médico cadastrado"}
-          </TextField>
-          <TextField
-            select
-            label="Paciente"
-            name="pacienteId"
-            defaultValue={form.pacienteId}
-            onChange={handleInputChange}
-            error={!!errors.pacienteId}
-            helperText={errors.pacienteId}
-            disabled={loading}
-            fullWidth
-            required
-          >
-            {/* Opções de pacientes */}
-            {options?.pacientes.map((paciente) => (
-              <MenuItem key={`paciente-${paciente.id}`} value={paciente.id}>
-                {paciente.nome} <br /> {paciente.cpf}
-              </MenuItem>
-            ))}
-          </TextField>
+
+          {/* Opções de médicos */}
+          <Autocomplete
+            options={options?.medicos || []}
+            getOptionLabel={(option) =>
+              `${option.nome} - ${option.especialidade}`
+            }
+            value={options?.medicos.find((m) => m.id === form.medicoId) || null}
+            onChange={(_, newValue) => {
+              setErrors((errors) => ({ ...errors, medicoId: "" }));
+
+              setForm((form) => ({ ...form, medicoId: newValue?.id || 0 }));
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Médico"
+                error={!!errors.medicoId}
+                helperText={errors.medicoId}
+                required
+              />
+            )}
+          />
+          {/* Opções de pacientes */}
+          <Autocomplete
+            options={options?.pacientes || []}
+            getOptionLabel={(option) => `${option.nome} - ${option.cpf}`}
+            value={
+              options?.pacientes.find((p) => p.id === form.pacienteId) || null
+            }
+            onChange={(_, newValue) => {
+              setErrors((errors) => ({ ...errors, pacienteId: "" }));
+
+              setForm((form) => ({ ...form, pacienteId: newValue?.id || 0 }));
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Paciente"
+                error={!!errors.pacienteId}
+                helperText={errors.pacienteId}
+                required
+              />
+            )}
+          />
         </Stack>
 
         <DialogActions>

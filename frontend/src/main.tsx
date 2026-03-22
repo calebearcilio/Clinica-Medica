@@ -5,6 +5,8 @@ import App from "./App.tsx";
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import { ptBR } from "@mui/material/locale";
 import PopupProvider from "./components/messages/PopupProvider.tsx";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const theme = createTheme({}, ptBR);
 
@@ -13,7 +15,9 @@ createRoot(document.getElementById("root")!).render(
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <PopupProvider>
-        <App />
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <App />
+        </LocalizationProvider>
       </PopupProvider>
     </ThemeProvider>
   </StrictMode>,

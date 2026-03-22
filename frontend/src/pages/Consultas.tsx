@@ -20,6 +20,8 @@ import DefaultTable, { type Column } from "../components/DefaultTable";
 import { sortConsultasByData } from "../utils/sortsUtils";
 import StaticMessage from "../components/messages/StaticMessage";
 import { usePopup } from "../components/messages/PopupProvider";
+import dayjs from "dayjs";
+import "dayjs/locale/pt-br"
 
 export default function ConsultasPage() {
   // informações das concultas
@@ -46,7 +48,12 @@ export default function ConsultasPage() {
     {
       id: "dataHora",
       label: "Data",
-      format: (value) => <Typography>{value.slice(0, 10)}</Typography>,
+      format: (value, _row) => (
+        <Typography>
+          {dayjs(value).locale("pt-br").format("HH:mm")} <br/>
+          {dayjs(value).locale("pt-br").format("D [de] MMMM [de] YYYY")}
+        </Typography>
+      ),
     },
     { id: "descricao", label: "Descrição" },
     { id: "medico", label: "Médico", format: (_, row) => row.medico.nome },
@@ -85,7 +92,7 @@ export default function ConsultasPage() {
     setMsgError(null);
 
     try {
-      const consultasDB = await consultaService.get();
+      const consultasDB = await consultaService.get();      
       setConsultas(consultasDB);
       setMsgError(null);
     } catch {

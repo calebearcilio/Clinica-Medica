@@ -51,8 +51,8 @@ const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
     if (paciente) {
       setForm({
         nome: paciente.nome,
-        cpf: paciente.cpf,
-        telefone: paciente.telefone,
+        cpf: maskCPF(paciente.cpf),
+        telefone: maskTelefone(paciente.telefone),
         email: paciente.email,
         dataNascimento: paciente.dataNascimento.slice(0, 10),
       });

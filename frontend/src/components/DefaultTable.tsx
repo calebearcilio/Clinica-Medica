@@ -8,6 +8,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  Typography,
 } from "@mui/material";
 import { useState } from "react";
 
@@ -49,7 +50,7 @@ function DefaultTable<Object>({
   return (
     <Paper elevation={3} sx={{ width: "100%", overflow: "hidden" }}>
       <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label="sticky table">
+        <Table stickyHeader aria-label="tabela padronizada">
           <TableHead>
             <TableRow>
               {columns.map((column) => (
@@ -58,7 +59,7 @@ function DefaultTable<Object>({
                   align={column.align}
                   style={{ minWidth: column.minWidth }}
                 >
-                  {column.label}
+                  <Typography variant="body1">{column.label}</Typography>
                 </TableCell>
               ))}
             </TableRow>
@@ -85,9 +86,11 @@ function DefaultTable<Object>({
                             key={String(column.id)}
                             align={column.align}
                           >
-                            {column.format
-                              ? column.format(value, row)
-                              : String(value ?? "")}
+                            <Typography variant="subtitle1">
+                              {column.format
+                                ? column.format(value, row)
+                                : String(value ?? "")}
+                            </Typography>
                           </TableCell>
                         );
                       })}

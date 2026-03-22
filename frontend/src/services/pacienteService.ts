@@ -4,8 +4,8 @@ import type {
   UpdatePacienteData,
 } from "../types/paciente";
 import { API_ENDPOINTS } from "../config/apiUrl";
-import { putFormatCpf, putFormatPhone } from "../utils/serviceUtils";
 import { api } from "../config/api";
+import { postFormatCpf, postFormatPhone } from "../utils/serviceUtils";
 
 const pacienteService = {
   async get(): Promise<Paciente[]> {
@@ -21,8 +21,8 @@ const pacienteService = {
   async create(data: CreatePacienteData): Promise<Paciente> {
     data = {
       ...data,
-      cpf: putFormatCpf(data.cpf),
-      telefone: data.telefone ? putFormatPhone(data.telefone) : undefined,
+      cpf: postFormatCpf(data.cpf),
+      telefone: data.telefone ? postFormatPhone(data.telefone) : undefined,
     };
     const request = await api.post<Paciente>(API_ENDPOINTS.PACIENTES, data);
     return request.data;
@@ -31,8 +31,8 @@ const pacienteService = {
   async update(id: number, data: UpdatePacienteData): Promise<Paciente> {
     data = {
       ...data,
-      cpf: data.cpf ? putFormatCpf(data.cpf) : undefined,
-      telefone: data.telefone ? putFormatPhone(data.telefone) : undefined,
+      cpf: data.cpf ? postFormatCpf(data.cpf) : undefined,
+      telefone: data.telefone ? postFormatPhone(data.telefone) : undefined,
     };
     const request = await api.put<Paciente>(
       `${API_ENDPOINTS.PACIENTES}/${id}`,
