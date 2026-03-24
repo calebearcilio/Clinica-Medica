@@ -1,139 +1,143 @@
-import { Consulta, Medico, Paciente } from "@prisma/client";
+import { Medico, Paciente } from "@prisma/client";
 import { prisma } from "../db/prisma";
 import medicoService from "../services/medicoService";
 import pacienteService from "../services/pacienteService";
 import secretarioService from "../services/secretarioService";
 import consultaService from "../services/consultaService";
+import { CreateConsultaData } from "../schemas/consultaSchema";
+import { CreateSecretarioData } from "../schemas/secretarioSchemas";
+import { CreatePacientedata } from "../schemas/pacienteSchema";
+import { CreateMedicoData } from "../schemas/medicoSchemas";
 
-const medicos = [
+const medicos: CreateMedicoData[] = [
   {
     nome: "Dr. João Silva",
-    email: "joao.silva@clinicamedica.com",
-    crm: "CRMj-001",
+    email: "joao.silva@curaeclinic.com",
+    crm: "SP-0001",
     especialidade: "Cardiologia",
-    telefone: "+55 (11) 99111-0001",
+    telefone: "5511991110001",
   },
   {
     nome: "Dra. Maria Oliveira",
-    email: "maria.oliveira@clinicamedica.com",
-    crm: "CRMj-002",
+    email: "maria.oliveira@curaeclinic.com",
+    crm: "RJ-0002",
     especialidade: "Pediatria",
-    telefone: "+55 (11) 99111-0002",
+    telefone: "5511991110002",
   },
   {
     nome: "Dr. Carlos Pereira",
-    email: "carlos.pereira@clinicamedica.com",
-    crm: "CRMj-003",
+    email: "carlos.pereira@curaeclinic.com",
+    crm: "MG-0003",
     especialidade: "Ortopedia",
-    telefone: "+55 (11) 99111-0003",
+    telefone: "5511991110003",
   },
   {
     nome: "Dra. Ana Souza",
-    email: "ana.souza@clinicamedica.com",
-    crm: "CRMj-004",
+    email: "ana.souza@curaeclinic.com",
+    crm: "BA-0004",
     especialidade: "Dermatologia",
-    telefone: "+55 (11) 99111-0004",
+    telefone: "5511991110004",
   },
   {
     nome: "Dr. Felipe Costa",
-    email: "felipe.costa@clinicamedica.com",
-    crm: "CRMj-005",
+    email: "felipe.costa@curaeclinic.com",
+    crm: "PR-0005",
     especialidade: "Ginecologia",
-    telefone: "+55 (11) 99111-0005",
+    telefone: "5511991110005",
   },
 ];
 
-const pacientes = [
+const pacientes: CreatePacientedata[] = [
   {
     nome: "Pedro Alves",
     email: "pedro.alves@gmail.com",
-    cpf: "123.456.789-01",
-    telefone: "+55 (11) 98888-0001",
-    dataNascimento: new Date("1985-03-12"),
+    cpf: "12345678901",
+    telefone: "5511988880001",
+    dataNascimento: new Date("1985-03-12").toISOString(),
   },
   {
     nome: "Mariana Lima",
     email: "mariana.lima@gmail.com",
-    cpf: "234.567.890-12",
-    telefone: "+55 (11) 98888-0002",
-    dataNascimento: new Date("1990-07-01"),
+    cpf: "23456789012",
+    telefone: "5511988880002",
+    dataNascimento: new Date("1990-07-01").toISOString(),
   },
   {
     nome: "Rafael Gomes",
     email: "rafael.gomes@gmail.com",
-    cpf: "345.678.901-23",
-    telefone: "+55 (11) 98888-0003",
-    dataNascimento: new Date("1978-11-20"),
+    cpf: "34567890123",
+    telefone: "5511988880003",
+    dataNascimento: new Date("1978-11-20").toISOString(),
   },
   {
     nome: "Beatriz Rocha",
     email: "beatriz.rocha@gmail.com",
-    cpf: "456.789.012-34",
-    telefone: "+55 (11) 98888-0004",
-    dataNascimento: new Date("1995-02-14"),
+    cpf: "45678901234",
+    telefone: "5511988880004",
+    dataNascimento: new Date("1995-02-14").toISOString(),
   },
   {
     nome: "Lucas Mendes",
     email: "lucas.mendes@gmail.com",
-    cpf: "567.890.123-45",
-    telefone: "+55 (11) 98888-0005",
-    dataNascimento: new Date("1982-09-05"),
+    cpf: "56789012345",
+    telefone: "5511988880005",
+    dataNascimento: new Date("1982-09-05").toISOString(),
   },
   {
     nome: "Carla Martins",
     email: "carla.martins@gmail.com",
-    cpf: "678.901.234-56",
-    telefone: "+55 (11) 98888-0006",
-    dataNascimento: new Date("2000-12-30"),
+    cpf: "67890123456",
+    telefone: "5511988880006",
+    dataNascimento: new Date("2000-12-30").toISOString(),
   },
   {
     nome: "Thiago Fernandes",
     email: "thiago.fernandes@gmail.com",
-    cpf: "789.012.345-67",
-    telefone: "+55 (11) 98888-0007",
-    dataNascimento: new Date("1970-06-17"),
+    cpf: "78901234567",
+    telefone: "5511988880007",
+    dataNascimento: new Date("1970-06-17").toISOString(),
   },
   {
     nome: "Juliana Carvalho",
     email: "juliana.carvalho@gmail.com",
-    cpf: "890.123.456-78",
-    telefone: "+55 (11) 98888-0008",
-    dataNascimento: new Date("1988-10-09"),
+    cpf: "89012345678",
+    telefone: "5511988880008",
+    dataNascimento: new Date("1988-10-09").toISOString(),
   },
   {
     nome: "Gabriel Ribeiro",
     email: "gabriel.ribeiro@gmail.com",
-    cpf: "901.234.567-89",
-    telefone: "+55 (11) 98888-0009",
-    dataNascimento: new Date("1992-04-22"),
+    cpf: "90123456789",
+    telefone: "5511988880009",
+    dataNascimento: new Date("1992-04-22").toISOString(),
   },
   {
     nome: "Natália Santos",
     email: "natalia.santos@gmail.com",
-    cpf: "012.345.678-90",
-    telefone: "+55 (11) 98888-0010",
-    dataNascimento: new Date("1998-08-03"),
+    cpf: "01234567890",
+    telefone: "5511988880010",
+    dataNascimento: new Date("1998-08-03").toISOString(),
   },
 ];
 
-const secretarios = [
+const secretarios: CreateSecretarioData[] = [
   {
     nome: "Paulo Henrique",
-    email: "paulo.henrique@clinicamedica.com",
+    email: "paulo.henrique@curaeclinic.com",
     senha: "senha12345",
-    telefone: "+55 (11) 97777-0001",
+    telefone: "5511977770001",
   },
   {
     nome: "Fernanda Silva",
-    email: "fernanda.silva@clinicamedica.com",
+    email: "fernanda.silva@curaeclinic.com",
     senha: "senha12345",
-    telefone: "+55 (11) 97777-0002",
+    telefone: "5511977770002",
   },
   {
     nome: "Marcelo Teixeira",
-    email: "marcelo.teixeira@clinicamedica.com",
+    email: "marcelo.teixeira@curaeclinic.com",
     senha: "senha12345",
-    telefone: "+55 (11) 97777-0003",
+    telefone: "5511977770003",
   },
 ];
 
@@ -215,7 +219,7 @@ const seedAll = async () => {
 
 const seedConsultas = async (
   medicos: Array<Medico>,
-  pacientes: Array<Paciente>
+  pacientes: Array<Paciente>,
 ): Promise<void> => {
   let consultaCount = 0;
   const motivos = [
@@ -240,7 +244,7 @@ const seedConsultas = async (
     const paciente = pacientes[i % pacientes.length];
     const medico = medicos[i % medicos.length];
 
-    const consulta: Omit<Consulta, "id" | "createdAt" | "updatedAt"> = {
+    const consulta: CreateConsultaData = {
       dataHora: consultaData,
       descricao: motivo,
       pacienteId: paciente.id,
@@ -251,7 +255,7 @@ const seedConsultas = async (
       await consultaService.create(consulta);
       consultaCount++;
       console.log(
-        ` ✅ Paciente: ${paciente.nome} - Médico: ${medico.nome} - Descrição: ${motivo}`
+        ` ✅ Paciente: ${paciente.nome} - Médico: ${medico.nome} - Descrição: ${motivo}`,
       );
     } catch (error: any) {
       if (error.code === "P2002") {

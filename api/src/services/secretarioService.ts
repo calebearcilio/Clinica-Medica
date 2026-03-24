@@ -1,6 +1,6 @@
 import { prisma } from "../db/prisma";
 import { Secretario } from "@prisma/client";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import {
   CreateSecretarioData,
   UpdateSecretarioData,

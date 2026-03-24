@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import secretarioService from "../services/secretarioService";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 const secretarioController = {
