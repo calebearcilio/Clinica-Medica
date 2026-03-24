@@ -22,7 +22,7 @@ import {
   createConsultaSchema,
   updateConsultaSchema,
 } from "../../schemas/consultaSchema";
-import { DateTimePicker, MobileDateTimePicker } from "@mui/x-date-pickers";
+import { DateTimePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import { maskCPF } from "../../utils/inputMaskUtils";
 

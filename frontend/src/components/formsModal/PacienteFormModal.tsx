@@ -18,6 +18,8 @@ import {
 } from "../../schemas/pacienteSchema";
 import { usePopup } from "../messages/PopupProvider";
 import { maskCPF, maskTelefone } from "../../utils/inputMaskUtils";
+import { DatePicker } from "@mui/x-date-pickers";
+import dayjs, { Dayjs } from "dayjs";
 
 type Props = {
   open: boolean;
@@ -153,18 +155,30 @@ const PacienteFormModal = ({ open, onClose, onSubmit, paciente }: Props) => {
             fullWidth
             required
           />
-          <TextField
+
+          <DatePicker
             label="Data de nascimento"
             name="dataNascimento"
-            type="date"
-            value={form.dataNascimento}
-            onChange={handleInputChange}
-            slotProps={{ inputLabel: { shrink: true } }}
-            error={!!errors.dataNascimento}
-            helperText={errors.dataNascimento}
+            value={form.dataNascimento ? dayjs(form.dataNascimento) : null}
             disabled={loading}
-            fullWidth
-            required
+            maxDate={dayjs()}
+            onChange={(newValue: Dayjs | null) => {
+              setErrors((errors) => ({ ...errors, dataNascimento: "" }));
+
+              setForm((form) => ({
+                ...form,
+                dataNascimento:
+                  newValue && newValue.isValid() ? newValue.toISOString() : "",
+              }));
+            }}
+            slotProps={{
+              textField: {
+                fullWidth: true,
+                required: true,
+                error: !!errors.dataNascimento,
+                helperText: errors.dataNascimento,
+              },
+            }}
           />
         </Stack>
       </DialogContent>
