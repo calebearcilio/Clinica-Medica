@@ -26,7 +26,7 @@ app.use("", routes);
 // Erro global
 app.use((error: Error, _req: Request, res: Response, _next: NextFunction) => {
   console.log(error.stack);
-  res.status(500).json({ message: "Erro interno no servidor." });
+  res.status(500).json({ message: "Erro global no servidor." });
 });
 
 //INICIAR O SERVIDOR
