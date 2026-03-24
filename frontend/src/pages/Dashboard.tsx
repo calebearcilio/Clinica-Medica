@@ -32,6 +32,7 @@ import DashboardSkeleton from "../components/skeletons/DeshboardSkeleton";
 import type { Secretario } from "../types/secretario";
 import secretarioService from "../services/secretarioService";
 import StaticMessage from "../components/messages/StaticMessage";
+import { maskCPF, maskTelefone } from "../utils/inputMaskUtils";
 
 const Dashboard: React.FC = () => {
   // Dados do banco
@@ -278,9 +279,9 @@ const Dashboard: React.FC = () => {
                     : pacientesPaginados
                   ).map((paciente) => (
                     <TableRow key={paciente.id} hover>
-                      <TableCell>{paciente.cpf}</TableCell>
+                      <TableCell>{maskCPF(paciente.cpf)}</TableCell>
                       <TableCell>{paciente.nome}</TableCell>
-                      <TableCell>{paciente.telefone}</TableCell>
+                      <TableCell>{maskTelefone(paciente.telefone)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
